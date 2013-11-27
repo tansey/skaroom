@@ -1,6 +1,6 @@
 class ChatController < WebsocketRails::BaseController
 
-  before_filter :online_rudies
+  before_filter :online_rudies, :is_rudy_signed_in
 
   def connect
     puts "Connect."
