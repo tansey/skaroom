@@ -1,8 +1,10 @@
 SkaMusic::Application.routes.draw do
-  get "chat/connect"
-  get "chat/disconnect"
-  get "chat/toast"
+  get  "chat/connect"
+  get  "chat/disconnect"
+  get  "chat/toast"
   root 'welcome#index'
+
+  post "/websocket" => 'websocket_rails'
   
   devise_for :rudies
 
