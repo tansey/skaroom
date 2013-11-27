@@ -1,7 +1,7 @@
 
 $( document ).ready( function() {
 
-  var dispatcher = new WebSocketRails( 'www.skamusic.com/websocket' );
+  var dispatcher = new WebSocketRails( 'www.skamusicroom.com/websocket' );
   //var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
 
   dispatcher.bind( 'who_is_connected', function( who ) {
