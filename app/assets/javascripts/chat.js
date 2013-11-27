@@ -1,7 +1,7 @@
 
 $( document ).ready( function() {
 
-  var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
+  var dispatcher = new WebSocketRails( 'skamusic.herokuapp.com/websocket' );
 
   dispatcher.bind( 'who_is_connected', function( who ) {
     for ( var i in who.rudies ) {
