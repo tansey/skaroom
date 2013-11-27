@@ -4,12 +4,20 @@
   .col-md-8
     %h3#rudy_list
   .col-md-4
+    %ul.nav.nav-tabs.nav-justified
+      %li#chat_tab.active= link_to "Chat", root_path
+      %li#queue_tab= link_to "Queue", root_path
     .panel.panel-primary#chat_panel
-      .panel-heading.text-center
-        %strong Chat
       .panel-body#chat_text
       .panel-footer.text-center
-        = form_tag( '/message', class: 'form-inline', role: 'form', id: 'chat_form' ) do
+        = form_tag( '/chat', class: 'form-inline', role: 'form', id: 'chat_form' ) do
           .form-group
             = text_field :chat, :message, class: 'form-control input-sm', autocomplete: "off", autofocus: true, placeholder: 'hep hep hep hep'
+    .panel.panel-primary#queue_panel
+      .panel-body#queue_list
+        Coming soon...
+      .panel-footer.text-center
+        = form_tag( '/queue', class: 'form-inline', role: 'form', id: 'queue_form' ) do
+          .form-group
+            = text_field :queue, :song, class: 'form-control input-sm', autocomplete: "off", autofocus: true, placeholder: 'search'
 %br/
