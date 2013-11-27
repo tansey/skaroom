@@ -5,12 +5,18 @@ $( document ).ready( function() {
 
   dispatcher.bind( 'who_is_connected', function( who ) {
     for ( var i in who.rudies ) {
-      $( "#rudy_list" ).append( "<li id='rudy-" + who.rudies[ i ].id + "'>" + who.rudies[ i ].name + "</li>" );
+      display  = "<div class='label label-default' id='rudy-" + who.rudies[ i ].id + "'>";
+      display +=    who.rudies[ i ].name;
+      display += "</div>&nbsp;";
+      $( "#rudy_list" ).append( display );
     }
   } );
 
   dispatcher.bind( 'connected', function( who ) {
-    $( "#rudy_list" ).append( "<li id='rudy-" + who.rudy.id + "'>" + who.rudy.name + "</li>" );
+      display  = "<div class='label label-default' id='rudy-" + who.rudy.id + "'>";
+      display +=    who.rudy.name;
+      display += "</div>&nbsp;";
+    $( "#rudy_list" ).append( display );
   } );
 
   dispatcher.bind( 'disconnected', function( who ) {
