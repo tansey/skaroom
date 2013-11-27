@@ -33,7 +33,7 @@ $( document ).ready( function() {
   } );
 
   dispatcher.bind( 'walt.welcome', function( who ) {
-    $("#chat_text").append( "<div><strong>Walter Jabsco</strong>: Hey, " + who.rudy.name + "!</div>" );
+    $("#chat_text").append( "<div><strong>Walt</strong>: Hey, " + who.rudy.name + "!</div>" );
     $("#chat_text").stop().animate({
       scrollTop: $('#chat_text')[0].scrollHeight
     }, 800);
