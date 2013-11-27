@@ -1,0 +1,30 @@
+= content_for :title, "Sign in"
+
+%h2 Sign in
+
+.row
+  .col-md-6
+
+    = form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
+      - if flash[ :alert ]
+        .alert.alert-danger= flash[ :alert ]
+
+      .form-group
+        = f.label :email, class: 'control-label'
+        = f.email_field :email, class: 'form-control', autocomplete: "off", autofocus: true
+
+      .form-group
+        = f.label :password, class: 'control-label'
+        = f.password_field :password, class: 'form-control', autocomplete: "off"
+
+      - if devise_mapping.rememberable?
+        .form-group
+          .checkbox
+            %label
+              = f.check_box :remember_me
+              Remember me
+
+      .form-group
+        = f.submit "Sign in", class: 'btn btn-primary'
+
+      .form-group= render "devise/shared/links"

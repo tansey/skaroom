@@ -1,0 +1,31 @@
+!!! html
+%html
+  %head
+    %title= yield( :title ) || "Ska Music".html_safe
+    = stylesheet_link_tag    "application"
+    = javascript_include_tag "application"
+    %link{ rel: "shortcut icon", href: "/favicon.png" }
+    %meta{ name: "viewport", content: "width=device-width" }
+    = csrf_meta_tags
+  %body
+    .container
+      .header
+        %ul.nav.nav-pills.pull-right
+          - if rudy_signed_in?
+            %li= link_to "Sign out",  destroy_rudy_session_path, method: :delete
+          - else
+            %li{ class: url_for == new_rudy_session_path      ? "active" : nil }= link_to "Sign in", new_rudy_session_path
+            %li{ class: url_for == new_rudy_registration_path ? "active" : nil }= link_to "Sign up", new_rudy_registration_path
+        %h3= link_to "Ska Music Room", root_path
+    .container
+      = yield
+    .container
+      .footer
+        .col-md-6
+          %p.text-left
+            &copy;
+            = Date.today.year
+            = link_to( "Digital Charleston", "http://www.digitalcharleston.com" ) + ", LLC"
+        .col-md-6
+          %p.text-right
+            = link_to "Ska Music on Facebook", "https://www.facebook.com/SkaMusicRoom"

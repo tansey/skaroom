@@ -1,0 +1,15 @@
+= content_for :title, "Ska Music Room"
+
+.row
+  .col-md-8
+    Whasup?
+  .col-md-4
+    .panel.panel-primary
+      .panel-heading.text-center
+        %strong Chat
+      .panel-body#chat_text
+      .panel-footer.text-center
+        = form_tag( '/message', class: 'form-inline', role: 'form', id: 'chat_form' ) do
+          .form-group
+            = text_field :chat, :message, class: 'form-control input-sm', autocomplete: "off", autofocus: true, placeholder: 'hep hep hep hep'
+%br/
