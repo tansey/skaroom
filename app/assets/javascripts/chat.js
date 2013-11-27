@@ -1,7 +1,7 @@
 
 $( document ).ready( function() {
 
-  var dispatcher = new WebSocketRails( '/websocket', false );
+  var dispatcher = new WebSocketRails( '/websocket' );
 
   dispatcher.bind( 'who_is_connected', function( who ) {
     for ( var i in who.rudies ) {
