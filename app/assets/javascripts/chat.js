@@ -31,4 +31,11 @@ $( document ).ready( function() {
     dispatcher.trigger( 'chat.message', { message: text } );
     $( "#chat_message" ).val( '' );
   } );
+
+  dispatcher.bind( 'walt.welcome', function( who ) {
+    $("#chat_text").append( "<div><strong>" + who.rudy + "</strong>: Hey, " + who.rudy.name + "!</div>" );
+    $("#chat_text").stop().animate({
+      scrollTop: $('#chat_text')[0].scrollHeight
+    }, 800);
+  } );
 } );

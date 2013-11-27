@@ -8,6 +8,7 @@ class ChatController < WebsocketRails::BaseController
     puts @@rudies.inspect
     @@rudies << current_rudy
     broadcast_message "connected", { rudy: current_rudy }
+    broadcast_message "walt.welcome", { rudy: current_rudy }
   end
 
   def disconnect
