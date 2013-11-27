@@ -29,4 +29,6 @@ SkaMusic::Application.configure do
 
   # For Devise
   config.action_mailer.default_url_options = { host: 'localhost:3000' }
+
+  ENV[ "REDISTOGO_URL" ] = 'redis://redistogo:9813ee0570bfcb71f90ed2d852763ddf@grideye.redistogo.com:9607/'
 end
