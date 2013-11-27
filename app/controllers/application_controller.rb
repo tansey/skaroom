@@ -27,7 +27,6 @@ class ApplicationController < ActionController::Base
     unless rudy_signed_in?
       flash[ :error ] = "Please sign in."
       redirect_to new_rudy_session_path
-      return
     end
   end
 end
