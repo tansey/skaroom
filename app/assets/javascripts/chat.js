@@ -1,8 +1,8 @@
 
 $( document ).ready( function() {
 
-  //var dispatcher = new WebSocketRails( 'www.skaroom.com/websocket' );
-  var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
+  var dispatcher = new WebSocketRails( 'www.skaroom.com/websocket' );
+  //var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
 
   dispatcher.bind( 'who_is_connected', function( who ) {
     for ( var i in who.rudies ) {
