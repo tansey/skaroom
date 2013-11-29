@@ -5,19 +5,18 @@
     %h3#rudy_list
   .col-md-4
     %ul.nav.nav-tabs.nav-justified
-      %li#chat_tab.active= link_to "Chat", root_path
-      %li#queue_tab= link_to "Queue", root_path
+      %li#chat_tab.active= link_to "<span class='glyphicon glyphicon-comment'></span>".html_safe, root_path
+      %li#queue_tab= link_to "<span class='glyphicon glyphicon-music'></span>".html_safe, root_path
     .panel.panel-primary#chat_panel
       .panel-body#chat_text
       .panel-footer.text-center
-        = form_tag( '/chat', class: 'form-inline', role: 'form', id: 'chat_form' ) do
-          .form-group
-            = text_field :chat, :message, class: 'form-control input-sm', autocomplete: "off", autofocus: true, placeholder: 'hep hep hep hep'
+        = form_tag( '/chat', role: 'form', id: 'chat_form' ) do
+          = text_field :chat, :message, class: 'form-control input-sm', autocomplete: "off", autofocus: true, placeholder: 'hep hep hep hep'
     .panel.panel-primary#queue_panel
-      .panel-body#queue_list
-        Coming soon...
-      .panel-footer.text-center
-        = form_tag( '/queue', class: 'form-inline', role: 'form', id: 'queue_form' ) do
-          .form-group
-            = text_field :queue, :song, class: 'form-control input-sm', autocomplete: "off", autofocus: true, placeholder: 'search'
+      .panel-body#queue_list Coming soon...
+      .panel-footer.text-center#queue_upload_form
+        = link_to "Upload music <span class='glyphicon glyphicon-cloud-upload'></span>".html_safe, queue_upload_path, id: "upload_music_link", class: "btn btn-primary btn-sm"
+        = file_field_tag "upload_music", id: "upload_music", 'data-url' => queue_upload_path, multiple: true, style: 'display:none'
+        = link_to "Search library <span class='glyphicon glyphicon-search'></span>".html_safe, queue_search_path, id: "search_music_link", class: "btn btn-primary btn-sm"
+      .panel-footer.text-center#queue_uploading Uploading...
 %br/

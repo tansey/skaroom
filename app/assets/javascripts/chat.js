@@ -1,8 +1,8 @@
 
 $( document ).ready( function() {
 
-  var dispatcher = new WebSocketRails( 'www.skaroom.com/websocket' );
-  //var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
+  //var dispatcher = new WebSocketRails( 'www.skaroom.com/websocket' );
+  var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
 
   dispatcher.bind( 'who_is_connected', function( who ) {
     for ( var i in who.rudies ) {
@@ -31,10 +31,10 @@ $( document ).ready( function() {
       scrollTop: $('#chat_text')[0].scrollHeight
     }, 800);
   } );
+
   $( "#chat_form" ).submit( function( event ) {
     event.preventDefault();
     var text = $( "#chat_message" ).val();
-    // ws.send( JSON.stringify( { text: text } ) );
     dispatcher.trigger( 'chat.message', { message: text } );
     $( "#chat_message" ).val( '' );
   } );
@@ -64,6 +64,31 @@ $( document ).ready( function() {
       $( "#queue_panel" ).show();
       $( "#chat_panel" ).hide();
     }
+  } );
+
+  $( "#upload_music_link" ).click( function( event ) {
+    event.preventDefault();
+    $( '#upload_music' ).click();
+  } );
+  
+  $( "#upload_music" ).fileupload( {
+    dataType: 'json',
+    done: function ( e, data ) {
+      $( '#queue_uploading' ).hide();
+      $( '#queue_upload_form' ).show();
+      $.each( data.result.files, function ( index, file ) {
+        $( "#queue_list" ).append( "<div>" + file.name + "</div>" );
+      } );
+    },
+    add: function ( e, data ) {
+      $( '#queue_upload_form' ).hide();
+      $( '#queue_uploading' ).show();
+      data.submit();
+    }
+  } );
+
+  $( "#search_music_link" ).click( function( event ) {
+    event.preventDefault();
   } );
 
 } );
