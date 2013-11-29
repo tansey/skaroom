@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131123151841) do
+ActiveRecord::Schema.define(version: 20131129222633) do
 
   create_table "rudies", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -34,5 +34,13 @@ ActiveRecord::Schema.define(version: 20131123151841) do
 
   add_index "rudies", ["email"], name: "index_rudies_on_email", unique: true, using: :btree
   add_index "rudies", ["reset_password_token"], name: "index_rudies_on_reset_password_token", unique: true, using: :btree
+
+  create_table "songs", force: true do |t|
+    t.string   "artist"
+    t.string   "title"
+    t.float    "duration"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end
