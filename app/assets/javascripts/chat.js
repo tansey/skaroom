@@ -77,7 +77,7 @@ $( document ).ready( function() {
       $( '#queue_uploading' ).hide();
       $( '#queue_upload_form' ).show();
       $.each( data.result.files, function ( index, file ) {
-        $( "#queue_list" ).append( "<div>" + file.name + "</div>" );
+        $( "#queue_list" ).append( '<div>"' + file.title + '" by ' + file.artist + '</div>' );
       } );
     },
     add: function ( e, data ) {

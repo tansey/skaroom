@@ -1,5 +1,6 @@
 class QueueController < ApplicationController
   def upload
-    render json: { files: [ { name: "Testing 1" }, { name: "Testing 2" } ] }
+    put "PARAMS: #{ params.inspect }"
+    render json: { files: [ { title: "Pressure Drop", artist: "Toots and the Maytails" }, { title: "Big Guns Down", artist: "Easy Big Fella" } ] }
   end
 end
