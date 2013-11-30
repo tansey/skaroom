@@ -16,13 +16,13 @@ class ChatController < WebsocketRails::BaseController
     if @@song.nil?
       Thread.new kickstart_radio
     else
-      puts "Playing a song in progress. SONG: #{ @@song.inspect }, POSITION: #{ @@position }"
+      puts "Playing a song in progress. SONG: #{ @@song.inspect }, STARTED: #{ @@started }"
       send_message "new_song", { song: {  id:       @@song.id, 
                                           title:    @@song.title, 
                                           artist:   @@song.artist, 
                                           song:     @@song.song.to_s, 
                                           duration: @@song.duration, 
-                                          position: @@position,
+                                          position: ( Time.now - @@started ).round,
                                           rudy:     @@song.rudy.name } }, namespace: :music
     end
   end
@@ -65,7 +65,6 @@ class ChatController < WebsocketRails::BaseController
   def kickstart_radio
     puts "Kickstarting the radio."
     @@song      = Song.all.sample
-    @@position  = 0
     @@started   = Time.now
 
     unless @@rudies.nil?
@@ -74,11 +73,11 @@ class ChatController < WebsocketRails::BaseController
                                               artist:   @@song.artist, 
                                               song:     @@song.song.to_s, 
                                               duration: @@song.duration, 
-                                              position: @@position,
+                                              position: 0,
                                               rudy:     @@song.rudy.name } }, namespace: :music
     end
 
-    EM.add_timer( 1 ) { @@position += 1 }
+    #EM.add_timer( 1 ) { @@position += 1 }
     EM.add_timer( @@song.duration ) { kickstart_radio }
   end
 
