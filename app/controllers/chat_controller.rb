@@ -1,7 +1,7 @@
 class ChatController < WebsocketRails::BaseController
 
-  before_action :online_rudies
-  before_action :current_song
+  before_filter :online_rudies
+  # before_filter :current_song
 
   def connect
     send_message "who_is_connected", { rudies: @@rudies }
@@ -35,11 +35,12 @@ class ChatController < WebsocketRails::BaseController
   end
 
   def current_song
-    @@position = 0
-
-    while true
-      handle_song( @@song )
-      sleep 1
+    if @@song.nil?
+      @@position = 0
+      while true
+        handle_song( @@song )
+        sleep 1
+      end
     end
   end
 
