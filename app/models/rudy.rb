@@ -5,4 +5,6 @@ class Rudy < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   validates :name, uniqueness: { case_sensitive: false }
+
+  has_many :songs
 end

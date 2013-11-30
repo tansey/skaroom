@@ -39,6 +39,8 @@ ActiveRecord::Schema.define(version: 20131129222633) do
     t.string   "artist"
     t.string   "title"
     t.float    "duration"
+    t.string   "song"
+    t.integer  "rudy_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

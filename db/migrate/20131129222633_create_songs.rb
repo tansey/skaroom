@@ -4,6 +4,8 @@ class CreateSongs < ActiveRecord::Migration
       t.string :artist
       t.string :title
       t.float :duration
+      t.string :song
+      t.references :rudy
 
       t.timestamps
     end

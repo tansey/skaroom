@@ -1,8 +1,8 @@
 
 $( document ).ready( function() {
 
-  var dispatcher = new WebSocketRails( 'www.skaroom.com/websocket' );
-  //var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
+  //var dispatcher = new WebSocketRails( 'www.skaroom.com/websocket' );
+  var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
 
   dispatcher.bind( 'who_is_connected', function( who ) {
     for ( var i in who.rudies ) {
@@ -77,7 +77,11 @@ $( document ).ready( function() {
       $( '#queue_uploading' ).hide();
       $( '#queue_upload_form' ).show();
       $.each( data.result.files, function ( index, file ) {
-        $( "#queue_list" ).append( '<div>"' + file.title + '" by ' + file.artist + '</div>' );
+        mp3  = '<p id="' + file.id + '">';
+        mp3 += '  "' + file.title + '"<br />';
+        mp3 += '  ' + file.artist
+        mp3 += '</p>';
+        $( "#queue_list" ).append( mp3 );
       } );
     },
     add: function ( e, data ) {
@@ -90,5 +94,45 @@ $( document ).ready( function() {
   $( "#search_music_link" ).click( function( event ) {
     event.preventDefault();
   } );
+
+  dispatcher.bind( 'music.playing', function( what ) {
+    var duration = what.song.duration - what.song.position;
+    setTimeout( updateCountdown, 1000 );
+
+    function updateCountdown() {
+      duration--;
+      if ( duration > 0 ) {
+        var time = getTime( duration );
+        $( "#now_playing_duration" ).text( time );
+        setTimeout( updateCountdown, 1000 );
+      //} else {
+         //submitForm();
+      }
+    }
+    var time = getTime( duration );
+    mp3  = '<div class="pull-right" id="now_playing_duration">' + time + '</div>';
+    mp3 += '<div id="now-' + what.song.id + '">';
+    mp3 += '  "' + what.song.title + '" by ';
+    mp3 += '  ' + what.song.artist
+    mp3 += '</div>';
+    mp3 += '<audio id="now_playing_audio">';
+    mp3 += '  <source src="' + what.song.song + '" type="audio/mp3" />';
+    mp3 += '</audio>';
+    $( "#now_playing" ).html( mp3 );
+    now_playing_audio = $( "#now_playing_audio" );
+    now_playing_audio.bind( 'canplay', function() {
+      this.currentTime = what.song.position;
+    } );
+    now_playing_audio.trigger( "play" );
+  } );
+
+  function getTime( duration ) {
+    var minutes = Math.floor( duration / 60 );
+    var seconds = duration - minutes * 60;
+    if ( seconds < 10 ) {
+      seconds = "0" + seconds
+    }
+    return minutes + ":" + seconds
+  }
 
 } );

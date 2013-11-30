@@ -1,7 +1,27 @@
 class QueueController < ApplicationController
   def upload
-    puts "PARAMS: #{ params[ :upload_music ].content_type.inspect }"
-    # song = Song.new params[ :upload_music ]
-    render json: { files: [ { title: "Pressure Drop", artist: "Toots and the Maytails" }, { title: "Big Guns Down", artist: "Easy Big Fella" } ] }
+    if params[ :upload_music ].content_type == 'audio/mp3'
+      require 'mp3info'
+      info = Mp3Info.open params[ :upload_music ].tempfile
+      artist    = info.tag.artist
+      title     = info.tag.title
+      duration  = info.length.round
+      song = Song.where( artist: artist, title: title, duration: duration ).first
+      if song.nil?
+        song = Song.new
+        song.song = params[ :upload_music ]
+        song.artist   = artist
+        song.title    = title
+        song.duration = duration
+        song.rudy     = current_rudy
+        song.save
+
+        render json: { files: [ { id: song.id, title: song.title, artist: song.artist, song: song.song.to_s } ] }
+      else
+        render json: { files: [] }
+      end
+    else
+      render json: { files: [] }
+    end
   end
 end
