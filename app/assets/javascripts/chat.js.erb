@@ -124,9 +124,12 @@ $( document ).ready( function() {
     event.preventDefault();
   } );
 
+  var count_down;
+
   dispatcher.bind( 'music.new_song', function( what ) {
+    clearTimeout( count_down );
     var duration = what.song.duration - what.song.position;
-    setTimeout( updateCountdown, 1000 );
+    count_down = setTimeout( updateCountdown, 1000 );
 
     function updateCountdown() {
       duration--;
