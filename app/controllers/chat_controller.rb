@@ -1,6 +1,7 @@
 class ChatController < WebsocketRails::BaseController
 
-  before_filter :online_rudies, :current_song
+  before_action :online_rudies
+  before_action :current_song
 
   def connect
     send_message "who_is_connected", { rudies: @@rudies }
