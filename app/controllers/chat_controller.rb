@@ -1,11 +1,12 @@
 class ChatController < WebsocketRails::BaseController
 
   before_filter :online_rudies
-  # before_filter :current_song
+  before_filter :current_song
 
   def connect
     send_message "who_is_connected", { rudies: @@rudies }
-    @@rudies << current_rudy
+    @@rudies << current_rudy unless @@rudies.include? current_rudy
+    puts "RUDIES: #{ @@rudies.inspect }"
     broadcast_message "connected", { rudy: current_rudy }
     broadcast_message "walt.welcome", { rudy: current_rudy }
 
@@ -36,11 +37,13 @@ class ChatController < WebsocketRails::BaseController
 
   def current_song
     if @@song.nil?
-      @@position = 0
-      while true
-        handle_song( @@song )
-        sleep 1
-      end
+      @@song      = Song.all.sample
+      @@position  = @@song.duration
+      @@started   = Time.now
+      #while true
+      #  handle_song( @@song )
+      #  sleep 1
+      #end
     end
   end
 
