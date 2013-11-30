@@ -47,6 +47,7 @@ end
 
 gem 'websocket-rails'
 gem 'carrierwave'
+gem 'fog'
 gem 'ruby-mp3info'
 
 # Use ActiveModel has_secure_password
