@@ -5,7 +5,7 @@ class ChatController < WebsocketRails::BaseController
 
   def connect
     send_message "who_is_connected", { rudies: @@rudies }
-    @@rudies << current_rudy unless @@rudies.include? current_rudy
+    @@rudies << current_rudy # unless @@rudies.include? current_rudy
     puts "RUDIES: #{ @@rudies.inspect }"
     broadcast_message "connected", { rudy: current_rudy }
     broadcast_message "walt.welcome", { rudy: current_rudy }
