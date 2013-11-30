@@ -1,8 +1,11 @@
 
 $( document ).ready( function() {
 
+  <% if Rails.env.development? %>
+  var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
+  <% else %>
   var dispatcher = new WebSocketRails( 'www.skaroom.com/websocket' );
-  //var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
+  <% end %>
 
   dispatcher.bind( 'who_is_connected', function( who ) {
     for ( var i in who.rudies ) {
@@ -22,6 +25,32 @@ $( document ).ready( function() {
 
   dispatcher.bind( 'disconnected', function( who ) {
     $( "#rudy-" + who.rudy.id ).remove();
+  } );
+
+  $( "#spin" ).click( function( event ) {
+    event.preventDefault();
+    var spin = $( "#spin" );
+    if ( spin.hasClass( 'btn-success' ) ) {
+      dispatcher.trigger( 'dj.remove', {} );
+      spin.removeClass( 'btn-success' );
+      spin.addClass( 'btn-default' );
+    } else {
+      dispatcher.trigger( 'dj.add', {} );
+      spin.removeClass( 'btn-default' );
+      spin.addClass( 'btn-success' );
+    }
+  } );
+
+  dispatcher.bind( 'dj_added', function( who ) {
+    var rudy = $( "#rudy-" + who.rudy.id );
+    rudy.removeClass( 'label-default' );
+    rudy.addClass( 'label-info' );
+  } );
+
+  dispatcher.bind( 'dj_removed', function( who ) {
+    var rudy = $( "#rudy-" + who.rudy.id );
+    rudy.removeClass( 'label-info' );
+    rudy.addClass( 'label-default' );
   } );
 
 
@@ -95,7 +124,7 @@ $( document ).ready( function() {
     event.preventDefault();
   } );
 
-  dispatcher.bind( 'music.playing', function( what ) {
+  dispatcher.bind( 'music.new_song', function( what ) {
     var duration = what.song.duration - what.song.position;
     setTimeout( updateCountdown, 1000 );
 

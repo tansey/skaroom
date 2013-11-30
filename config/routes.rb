@@ -7,6 +7,9 @@ SkaMusic::Application.routes.draw do
   get  "chat/connect"
   get  "chat/disconnect"
   get  "chat/toast"
+
+  get  "chat/add_dj"
+  get  "chat/remove_dj"
   
   devise_for :rudies
 
