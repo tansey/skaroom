@@ -2,6 +2,7 @@ class ChatController < WebsocketRails::BaseController
 
   before_filter :online_rudies
   before_filter :online_djs
+  before_filter :current_song
   # before_filter :current_song
 
   def connect
@@ -11,17 +12,19 @@ class ChatController < WebsocketRails::BaseController
     broadcast_message( "connected", { rudy: current_rudy } ) if rudy_signed_in?
     broadcast_message( "walt.welcome", { rudy: current_rudy } ) if rudy_signed_in?
 
-    Thread.new kickstart_radio # if @@song.nil?
-
-    #now_playing = current_song
-    #puts "SONG: #{ now_playing.inspect }"
-    #send_message "music.playing", { song: { id:       now_playing.song.id, 
-    #                                        title:    now_playing.song.title, 
-    #                                        artist:   now_playing.song.artist, 
-    #                                        song:     now_playing.song.song.to_s, 
-    #                                        duration: now_playing.song.duration, 
-    #                                        position: now_playing.position,
-    #                                        rudy:     now_playing.song.rudy.name } }
+    #puts "SONG: #{ @@song.inspect }"
+    if @@song.nil?
+      Thread.new kickstart_radio
+    else
+      puts "Playing a song in progress. SONG: #{ @@song.inspect }, POSITION: #{ @@position }"
+      send_message "new_song", { song: {  id:       @@song.id, 
+                                          title:    @@song.title, 
+                                          artist:   @@song.artist, 
+                                          song:     @@song.song.to_s, 
+                                          duration: @@song.duration, 
+                                          position: @@position,
+                                          rudy:     @@song.rudy.name } }, namespace: :music
+    end
   end
 
   def disconnect
@@ -55,6 +58,10 @@ class ChatController < WebsocketRails::BaseController
     @@djs ||= []
   end
 
+  def current_song
+    @@song ||= nil
+  end
+
   def kickstart_radio
     puts "Kickstarting the radio."
     @@song      = Song.all.sample
@@ -71,7 +78,7 @@ class ChatController < WebsocketRails::BaseController
                                               rudy:     @@song.rudy.name } }, namespace: :music
     end
 
-    EM.add_timer( 1 ) { @@position -= 1 }
+    EM.add_timer( 1 ) { @@position += 1 }
     EM.add_timer( @@song.duration ) { kickstart_radio }
   end
 
