@@ -25,8 +25,8 @@
             %br/
             = song.artist
       .panel-footer.text-center#queue_upload_form
-        = link_to "Upload music <span class='glyphicon glyphicon-cloud-upload'></span>".html_safe, queue_upload_path, id: "upload_music_link", class: "btn btn-primary btn-sm"
+        = link_to "Upload music <span class='glyphicon glyphicon-cloud-upload'></span>".html_safe, queue_upload_path, id: "upload_music_link", class: "btn btn-primary btn-sm btn-block"
         = file_field_tag "upload_music", id: "upload_music", 'data-url' => queue_upload_path, multiple: true, style: 'display:none'
-        = link_to "Search library <span class='glyphicon glyphicon-search'></span>".html_safe, queue_search_path, id: "search_music_link", class: "btn btn-primary btn-sm"
+        =# link_to "Search library <span class='glyphicon glyphicon-search'></span>".html_safe, queue_search_path, id: "search_music_link", class: "btn btn-primary btn-sm"
       .panel-footer.text-center#queue_uploading Uploading...
 %br/

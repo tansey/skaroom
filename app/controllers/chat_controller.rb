@@ -29,6 +29,7 @@ class ChatController < WebsocketRails::BaseController
 
   def disconnect
     @@rudies.delete current_rudy
+    @@djs.delete current_rudy
     broadcast_message "disconnected", { rudy: current_rudy }
   end
 
