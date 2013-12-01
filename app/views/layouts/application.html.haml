@@ -7,7 +7,7 @@
     %link{ rel: "shortcut icon", href: "/favicon.png" }
     %meta{ name: "viewport", content: "width=device-width" }
     = csrf_meta_tags
-  %body
+  %body{ id: ( ( url_for == root_path or url_for == new_rudy_session_path or url_for == new_rudy_registration_path or url_for == new_rudy_password_path ) and not rudy_signed_in? ) ? 'splash' : nil }
     .container
       .header
         %ul.nav.nav-pills.pull-right

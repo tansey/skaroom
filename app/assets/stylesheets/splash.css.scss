@@ -1,6 +1,9 @@
 .jumbotron {
   height: 363px;
   background-image: image-url( 'walt-bg.png' );
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #060606;
   h1 {
     color: #000000;
     font-size: 48px;
