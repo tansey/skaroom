@@ -7,7 +7,7 @@ class QueueController < ApplicationController
       title     = info.tag.title
       duration  = info.length.round
       song = Song.where( artist: artist, title: title, duration: duration ).first
-      if song.nil?
+      if song.nil? and not song.artist.nil? and not song.title.nil? and not song.duration.nil?
         song = Song.new
         song.song = params[ :upload_music ]
         song.artist   = artist
