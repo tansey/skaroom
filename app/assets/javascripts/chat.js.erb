@@ -186,7 +186,18 @@ $( document ).ready( function() {
       scrollTop: $('#chat_text')[0].scrollHeight
     }, 800);
 
-    $( '#rudy_list .btn-success, #rudy_list .btn-danger' ).removeClass( 'btn-success' ).removeClass( 'btn-danger' );
+    $( '#rudy_list .label-danger'  ).removeClass( 'label-danger'  ).
+                                     removeClass( 'label-default' ).
+                                     addClass(    'label-default' );
+    $( '#rudy_list .label-success' ).removeClass( 'label-success' ).
+                                     removeClass( 'label-default' ).
+                                     addClass(    'label-default' );
+    $( "#awesome" ).removeClass( 'btn-success' ).
+                    removeClass( 'btn-default' ).
+                    addClass(    'btn-default' );
+    $( "#lame"    ).removeClass( 'btn-danger'  ).
+                    removeClass( 'btn-default' ).
+                    addClass(    'btn-default' );
 
     clearTimeout( count_down );
     var duration = what.song.duration - what.song.position;
