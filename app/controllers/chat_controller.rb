@@ -49,6 +49,16 @@ class ChatController < WebsocketRails::BaseController
     broadcast_message "dj_removed", { rudy: current_rudy }
   end
 
+  def lame
+    puts "DJ Lamed"
+    broadcast_message "dj_lamed", { rudy: current_rudy }
+  end
+
+  def awesome
+    puts "DJ Awesomed"
+    broadcast_message "dj_awesomed", { rudy: current_rudy }
+  end
+
   private
 
   def online_rudies

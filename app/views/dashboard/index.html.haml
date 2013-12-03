@@ -2,13 +2,19 @@
 
 .row
   .col-md-8
+    %audio#now_playing_audio
+      %source#now_playing_audio_source{ type: "audio/mp3" }
     .panel.panel-default
       .panel-heading.text-center
-        -# .pull-right= link_to "Spin", "/spin", class: "btn btn-default btn-sm", id: "spin"
         %strong Now Playing
       .panel-body#now_playing
     %h3#rudy_list
   .col-md-4
+    #tools.well
+      = link_to "<span class='glyphicon glyphicon-volume-up'></span>".html_safe, "/volume_up", class: "btn btn-default", id: "volume"
+      =# link_to "<span class='glyphicon glyphicon-record'></span>".html_safe, "/spin", class: "btn btn-default", id: "spin"
+      = link_to "<span class='glyphicon glyphicon-thumbs-down'></span>".html_safe, "/lame", class: "btn btn-default", id: "lame"
+      = link_to "<span class='glyphicon glyphicon-thumbs-up'></span>".html_safe, "/awesome", class: "btn btn-default", id: "awesome"
     %ul.nav.nav-tabs.nav-justified
       %li#chat_tab.active= link_to "<span class='glyphicon glyphicon-comment'></span>".html_safe, root_path
       %li#queue_tab= link_to "<span class='glyphicon glyphicon-music'></span>".html_safe, root_path

@@ -8,8 +8,10 @@ WebsocketRails::EventMap.describe do
     subscribe :message, 'chat#toast'
   end
   namespace :dj do
-    subscribe :add,    'chat#add_dj'
-    subscribe :remove, 'chat#remove_dj'
+    subscribe :add,     'chat#add_dj'
+    subscribe :remove,  'chat#remove_dj'
+    subscribe :lame,    'chat#lame'
+    subscribe :awesome, 'chat#awesome'
   end
 
   # You can use this file to map incoming events to controller actions.

@@ -30,32 +30,85 @@ $( document ).ready( function() {
   $( "#spin" ).click( function( event ) {
     event.preventDefault();
     var spin = $( "#spin" );
-    if ( spin.hasClass( 'btn-success' ) ) {
+    if ( spin.hasClass( 'btn-info' ) ) {
       dispatcher.trigger( 'dj.remove', {} );
-      spin.removeClass( 'btn-success' );
+      spin.removeClass( 'btn-info' );
       spin.addClass( 'btn-default' );
     } else {
       dispatcher.trigger( 'dj.add', {} );
       spin.removeClass( 'btn-default' );
-      spin.addClass( 'btn-success' );
+      spin.addClass( 'btn-info' );
     }
   } );
 
   dispatcher.bind( 'dj_added', function( who ) {
     var rudy = $( "#rudy-" + who.rudy.id );
     rudy.removeClass( 'label-default' );
+    rudy.removeClass( 'label-info' );
+    rudy.removeClass( 'label-danger' );
+    rudy.removeClass( 'label-primary' );
+    rudy.removeClass( 'label-success' );
     rudy.addClass( 'label-info' );
   } );
 
   dispatcher.bind( 'dj_removed', function( who ) {
     var rudy = $( "#rudy-" + who.rudy.id );
+    rudy.removeClass( 'label-default' );
     rudy.removeClass( 'label-info' );
+    rudy.removeClass( 'label-danger' );
+    rudy.removeClass( 'label-primary' );
+    rudy.removeClass( 'label-success' );
     rudy.addClass( 'label-default' );
   } );
 
+  $( "#lame" ).click( function( event ) {
+    event.preventDefault();
+    var lame = $( "#lame" );
+    lame.removeClass( 'btn-danger' );
+    lame.removeClass( 'btn-default' );
+    lame.addClass( 'btn-danger' );
+    var awesome = $( "#awesome" );
+    awesome.removeClass( 'btn-success' );
+    awesome.removeClass( 'btn-default' );
+    awesome.addClass( 'btn-default' );
+    dispatcher.trigger( 'dj.lame', {} );
+  } );
+
+  $( "#awesome" ).click( function( event ) {
+    event.preventDefault();
+    var awesome = $( "#awesome" );
+    awesome.removeClass( 'btn-success' );
+    awesome.removeClass( 'btn-default' );
+    awesome.addClass( 'btn-success' );
+    var lame = $( "#lame" );
+    lame.removeClass( 'btn-danger' );
+    lame.removeClass( 'btn-default' );
+    lame.addClass( 'btn-default' );
+    dispatcher.trigger( 'dj.awesome', {} );
+  } );
+
+  dispatcher.bind( 'dj_lamed', function( who ) {
+    var rudy = $( "#rudy-" + who.rudy.id );
+    rudy.removeClass( 'label-default' );
+    rudy.removeClass( 'label-info' );
+    rudy.removeClass( 'label-danger' );
+    rudy.removeClass( 'label-primary' );
+    rudy.removeClass( 'label-success' );
+    rudy.addClass( 'label-danger' );
+  } );
+
+  dispatcher.bind( 'dj_awesomed', function( who ) {
+    var rudy = $( "#rudy-" + who.rudy.id );
+    rudy.removeClass( 'label-default' );
+    rudy.removeClass( 'label-info' );
+    rudy.removeClass( 'label-danger' );
+    rudy.removeClass( 'label-primary' );
+    rudy.removeClass( 'label-success' );
+    rudy.addClass( 'label-success' );
+  } );
 
   dispatcher.bind( 'chat.new_toast', function( message ) {
-    $("#chat_text").append( "<div><strong>" + message.rudy + "</strong>: " + message.toast + "</div>" );
+    $("#chat_text").append( "<p><strong>" + message.rudy + "</strong>: " + message.toast + "</p>" );
     $("#chat_text").stop().animate({
       scrollTop: $('#chat_text')[0].scrollHeight
     }, 800);
@@ -69,7 +122,7 @@ $( document ).ready( function() {
   } );
 
   dispatcher.bind( 'walt.welcome', function( who ) {
-    $("#chat_text").append( "<div><strong>Walt</strong>: Hey, " + who.rudy.name + "!</div>" );
+    $("#chat_text").append( "<p><strong>Walt</strong>: Hey, " + who.rudy.name + "!</p>" );
     $("#chat_text").stop().animate({
       scrollTop: $('#chat_text')[0].scrollHeight
     }, 800);
@@ -127,6 +180,12 @@ $( document ).ready( function() {
   var count_down;
 
   dispatcher.bind( 'music.new_song', function( what ) {
+
+    $("#chat_text").append( '<div class="well well-sm">"' + what.song.title + '"<br />' + what.song.artist + '</div>' );
+    $("#chat_text").stop().animate({
+      scrollTop: $('#chat_text')[0].scrollHeight
+    }, 800);
+
     clearTimeout( count_down );
     var duration = what.song.duration - what.song.position;
     count_down = setTimeout( updateCountdown, 1000 );
@@ -147,11 +206,10 @@ $( document ).ready( function() {
     mp3 += '  "' + what.song.title + '" by ';
     mp3 += '  ' + what.song.artist
     mp3 += '</div>';
-    mp3 += '<audio id="now_playing_audio">';
-    mp3 += '  <source src="' + what.song.song + '" type="audio/mp3" />';
-    mp3 += '</audio>';
     $( "#now_playing" ).html( mp3 );
     now_playing_audio = $( "#now_playing_audio" );
+    $( '#now_playing_audio_source' ).attr( 'src', what.song.song );
+    now_playing_audio.load();
     now_playing_audio.bind( 'canplay', function() {
       this.currentTime = what.song.position;
     } );
@@ -166,5 +224,20 @@ $( document ).ready( function() {
     }
     return minutes + ":" + seconds
   }
+
+  $( "#volume" ).click( function( event ) {
+    event.preventDefault();
+    var spin = $( "#volume" );
+    var spin_icon = $( 'span', spin );
+    if ( spin_icon.hasClass( 'glyphicon-volume-up' ) ) {
+      $( "#now_playing_audio" ).prop( 'volume', 0.0 );
+      spin_icon.removeClass( 'glyphicon-volume-up' );
+      spin_icon.addClass( 'glyphicon-volume-off' );
+    } else {
+      $( "#now_playing_audio" ).prop( 'volume', 0.1 );
+      spin_icon.removeClass( 'glyphicon-volume-off' );
+      spin_icon.addClass( 'glyphicon-volume-up' );
+    }
+  } );
 
 } );
