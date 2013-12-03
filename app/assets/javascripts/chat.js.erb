@@ -116,8 +116,10 @@ $( document ).ready( function() {
 
   $( "#chat_form" ).submit( function( event ) {
     event.preventDefault();
-    var text = $( "#chat_message" ).val();
-    dispatcher.trigger( 'chat.message', { message: text } );
+    var text = $( "#chat_message" ).val().trim();
+    if ( text != '' ) {
+      dispatcher.trigger( 'chat.message', { message: text } );
+    }
     $( "#chat_message" ).val( '' );
   } );
 
@@ -208,7 +210,7 @@ $( document ).ready( function() {
       if ( duration > 0 ) {
         var time = getTime( duration );
         $( "#now_playing_duration" ).text( time );
-        setTimeout( updateCountdown, 1000 );
+        count_down = setTimeout( updateCountdown, 1000 );
       //} else {
          //submitForm();
       }
