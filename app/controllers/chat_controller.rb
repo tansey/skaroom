@@ -75,7 +75,11 @@ class ChatController < WebsocketRails::BaseController
 
   def kickstart_radio
     puts "Kickstarting the radio."
-    @@song      = Song.all.sample
+    if @@song.nil?
+      @@song      = Song.all.sample
+    else
+      @@song      = Song.where( 'artist != ?' @@song.artist ).sample
+    end
     @@started   = Time.now
 
     unless @@rudies.nil?
