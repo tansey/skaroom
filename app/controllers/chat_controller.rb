@@ -78,7 +78,7 @@ class ChatController < WebsocketRails::BaseController
     if @@song.nil?
       @@song      = Song.all.sample
     else
-      @@song      = Song.where( 'artist != ?' @@song.artist ).sample
+      @@song      = Song.where( 'artist != ?', @@song.artist ).sample
     end
     @@started   = Time.now
 
