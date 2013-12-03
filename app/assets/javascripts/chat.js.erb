@@ -186,6 +186,8 @@ $( document ).ready( function() {
       scrollTop: $('#chat_text')[0].scrollHeight
     }, 800);
 
+    $( '#rudy_list .btn-success, #rudy_list .btn-danger' ).removeClass( 'btn-success' ).removeClass( 'btn-danger' );
+
     clearTimeout( count_down );
     var duration = what.song.duration - what.song.position;
     count_down = setTimeout( updateCountdown, 1000 );
