@@ -13,17 +13,17 @@ $( document ).ready( function() {
 
   dispatcher.bind( 'who_is_connected', function( who ) {
     for ( var i in who.rudies ) {
-      display  = "<div class='label label-default' id='rudy-" + who.rudies[ i ].id + "'>";
+      display  = "<p style='display:inline-block;' class='label label-default' id='rudy-" + who.rudies[ i ].id + "'>";
       display +=    who.rudies[ i ].name;
-      display += "</div>&nbsp;";
+      display += "</p>&nbsp; ";
       $( "#rudy_list" ).append( display );
     }
   } );
 
   dispatcher.bind( 'connected', function( who ) {
-      display  = "<div class='label label-default' id='rudy-" + who.rudy.id + "'>";
-      display +=    who.rudy.name;
-      display += "</div>&nbsp;";
+    display  = "<p style='display:inline-block;' class='label label-default' id='rudy-" + who.rudy.id + "'>";
+    display +=    who.rudy.name;
+    display += "</p>&nbsp; ";
     $( "#rudy_list" ).append( display );
   } );
 
@@ -236,7 +236,13 @@ $( document ).ready( function() {
     $( '#rudy_list .label-success' ).removeClass( 'label-success' ).
                                      removeClass( 'label-default' ).
                                      addClass(    'label-default' );
+    $( '#rudy_list .label-warning' ).removeClass( 'label-warning' ).
+                                     removeClass( 'label-default' ).
+                                     addClass(    'label-default' );
     $( "#awesome" ).removeClass( 'btn-success' ).
+                    removeClass( 'btn-default' ).
+                    addClass(    'btn-default' );
+    $( "#meh" ).removeClass( 'btn-warning' ).
                     removeClass( 'btn-default' ).
                     addClass(    'btn-default' );
     $( "#lame"    ).removeClass( 'btn-danger'  ).
