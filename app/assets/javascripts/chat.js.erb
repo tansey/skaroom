@@ -2,10 +2,14 @@
 $( document ).ready( function() {
 
   <% if Rails.env.development? %>
-  var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
+  var dispatcher = new WebSocketRails( 'localhost:3001/websocket' );
   <% else %>
   var dispatcher = new WebSocketRails( 'www.skaroom.com/websocket' );
   <% end %>
+
+  var saved_volume = 0.5;
+  var now_playing_audio = $( "#now_playing_audio" );
+  now_playing_audio.prop( 'volume', saved_volume );
 
   dispatcher.bind( 'who_is_connected', function( who ) {
     for ( var i in who.rudies ) {
@@ -67,11 +71,32 @@ $( document ).ready( function() {
     lame.removeClass( 'btn-danger' );
     lame.removeClass( 'btn-default' );
     lame.addClass( 'btn-danger' );
+    var meh = $( "#meh" );
+    meh.removeClass( 'btn-warning' );
+    meh.removeClass( 'btn-default' );
+    meh.addClass( 'btn-default' );
     var awesome = $( "#awesome" );
     awesome.removeClass( 'btn-success' );
     awesome.removeClass( 'btn-default' );
     awesome.addClass( 'btn-default' );
     dispatcher.trigger( 'dj.lame', {} );
+  } );
+
+  $( "#meh" ).click( function( event ) {
+    event.preventDefault();
+    var awesome = $( "#awesome" );
+    awesome.removeClass( 'btn-success' );
+    awesome.removeClass( 'btn-default' );
+    awesome.addClass( 'btn-default' );
+    var meh = $( "#meh" );
+    meh.removeClass( 'btn-warning' );
+    meh.removeClass( 'btn-default' );
+    meh.addClass( 'btn-warning' );
+    var lame = $( "#lame" );
+    lame.removeClass( 'btn-danger' );
+    lame.removeClass( 'btn-default' );
+    lame.addClass( 'btn-default' );
+    dispatcher.trigger( 'dj.meh', {} );
   } );
 
   $( "#awesome" ).click( function( event ) {
@@ -80,6 +105,10 @@ $( document ).ready( function() {
     awesome.removeClass( 'btn-success' );
     awesome.removeClass( 'btn-default' );
     awesome.addClass( 'btn-success' );
+    var meh = $( "#meh" );
+    meh.removeClass( 'btn-warning' );
+    meh.removeClass( 'btn-default' );
+    meh.addClass( 'btn-default' );
     var lame = $( "#lame" );
     lame.removeClass( 'btn-danger' );
     lame.removeClass( 'btn-default' );
@@ -90,6 +119,7 @@ $( document ).ready( function() {
   dispatcher.bind( 'dj_lamed', function( who ) {
     var rudy = $( "#rudy-" + who.rudy.id );
     rudy.removeClass( 'label-default' );
+    rudy.removeClass( 'label-warning' );
     rudy.removeClass( 'label-info' );
     rudy.removeClass( 'label-danger' );
     rudy.removeClass( 'label-primary' );
@@ -97,9 +127,21 @@ $( document ).ready( function() {
     rudy.addClass( 'label-danger' );
   } );
 
+  dispatcher.bind( 'dj_mehed', function( who ) {
+    var rudy = $( "#rudy-" + who.rudy.id );
+    rudy.removeClass( 'label-default' );
+    rudy.removeClass( 'label-warning' );
+    rudy.removeClass( 'label-info' );
+    rudy.removeClass( 'label-danger' );
+    rudy.removeClass( 'label-primary' );
+    rudy.removeClass( 'label-success' );
+    rudy.addClass( 'label-warning' );
+  } );
+
   dispatcher.bind( 'dj_awesomed', function( who ) {
     var rudy = $( "#rudy-" + who.rudy.id );
     rudy.removeClass( 'label-default' );
+    rudy.removeClass( 'label-warning' );
     rudy.removeClass( 'label-info' );
     rudy.removeClass( 'label-danger' );
     rudy.removeClass( 'label-primary' );
@@ -219,7 +261,7 @@ $( document ).ready( function() {
     mp3  = '<div class="pull-right" id="now_playing_duration">' + time + '</div>';
     mp3 += '<div id="now-' + what.song.id + '">';
     mp3 += '  "' + what.song.title + '" by ';
-    mp3 += '  ' + what.song.artist
+    mp3 += '  ' + what.song.artist;
     mp3 += '</div>';
     $( "#now_playing" ).html( mp3 );
     now_playing_audio = $( "#now_playing_audio" );
@@ -235,23 +277,77 @@ $( document ).ready( function() {
     var minutes = Math.floor( duration / 60 );
     var seconds = duration - minutes * 60;
     if ( seconds < 10 ) {
-      seconds = "0" + seconds
+      seconds = "0" + seconds;
     }
-    return minutes + ":" + seconds
+    return minutes + ":" + seconds;
   }
 
-  $( "#volume" ).click( function( event ) {
+  var saved_volume = 0.5;
+
+  $( "#volume_off" ).click( function( event ) {
     event.preventDefault();
-    var spin = $( "#volume" );
-    var spin_icon = $( 'span', spin );
-    if ( spin_icon.hasClass( 'glyphicon-volume-up' ) ) {
+    var volume_off  = $( "#volume_off" );
+    var volume_down = $( "#volume_down" );
+    var volume_up   = $( "#volume_up" );
+    if ( $( "#now_playing_audio" ).prop( 'volume' ) > 0.0 ) {
+      volume_up.removeClass( 'disabled' );
+      volume_down.removeClass( 'disabled' );
+      volume_down.addClass( 'disabled' );
       $( "#now_playing_audio" ).prop( 'volume', 0.0 );
-      spin_icon.removeClass( 'glyphicon-volume-up' );
-      spin_icon.addClass( 'glyphicon-volume-off' );
+      volume_off.removeClass( 'btn-default' );
+      volume_off.removeClass( 'btn-danger' );
+      volume_off.addClass( 'btn-danger' );
     } else {
-      $( "#now_playing_audio" ).prop( 'volume', 1.0 );
-      spin_icon.removeClass( 'glyphicon-volume-off' );
-      spin_icon.addClass( 'glyphicon-volume-up' );
+      volume_up.removeClass( 'disabled' );
+      volume_down.removeClass( 'disabled' );
+      if ( saved_volume == 1.0 ) {
+        volume_up.addClass( 'disabled' );
+      }
+      var new_saved_volume = $( "#now_playing_audio" ).prop( 'volume' );
+      $( "#now_playing_audio" ).prop( 'volume', saved_volume );
+      saved_volume = new_saved_volume;
+      volume_off.removeClass( 'btn-default' );
+      volume_off.removeClass( 'btn-danger' );
+      volume_off.addClass( 'btn-default' );
+    }
+  } );
+
+  $( "#volume_up" ).click( function( event ) {
+    event.preventDefault();
+    $( "#volume_down" ).removeClass( 'disabled' );
+    var volume_off = $( "#volume_off" );
+    volume_off.removeClass( 'btn-default' );
+    volume_off.removeClass( 'btn-danger' );
+    volume_off.addClass( 'btn-default' );
+    var volume_up = $( "#volume_up" );
+    var now_playing_audio = $( "#now_playing_audio" );
+    if ( now_playing_audio.prop( 'volume' ) < 1.0 ) {
+      now_playing_audio.prop( 'volume', ( now_playing_audio.prop( 'volume' ) + 0.1 ).toFixed( 1 ) );
+    
+      if ( now_playing_audio.prop( 'volume' ) == 1.0 ) {
+        volume_up.addClass( 'disabled' );
+      }
+    }
+    saved_volume = $( "#now_playing_audio" ).prop( 'volume' );
+  } );
+
+  $( "#volume_down" ).click( function( event ) {
+    event.preventDefault();
+    $( "#volume_up" ).removeClass( 'disabled' );
+    var volume_down = $( "#volume_down" );
+    var now_playing_audio = $( "#now_playing_audio" );
+    if ( now_playing_audio.prop( 'volume' ) > 0.0 ) {
+      now_playing_audio.prop( 'volume', ( now_playing_audio.prop( 'volume' ) - 0.1 ).toFixed( 1 ) );
+    
+      saved_volume = $( "#now_playing_audio" ).prop( 'volume' );
+      if ( now_playing_audio.prop( 'volume' ) == 0.0 ) {
+        volume_down.addClass( 'disabled' );
+        var volume_off = $( "#volume_off" );
+        volume_off.removeClass( 'btn-default' );
+        volume_off.removeClass( 'btn-danger' );
+        volume_off.addClass( 'btn-danger' );
+        saved_volume = 0.1;
+      }
     }
   } );
 

@@ -11,6 +11,7 @@ WebsocketRails::EventMap.describe do
     subscribe :add,     'chat#add_dj'
     subscribe :remove,  'chat#remove_dj'
     subscribe :lame,    'chat#lame'
+    subscribe :meh,     'chat#meh'
     subscribe :awesome, 'chat#awesome'
   end
 
