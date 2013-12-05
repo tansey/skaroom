@@ -8,7 +8,6 @@ class ChatController < WebsocketRails::BaseController
   def connect
     send_message "who_is_connected", { rudies: @@rudies }
     @@rudies << current_rudy unless @@rudies.include? current_rudy or not rudy_signed_in?
-    puts "RUDIES: #{ @@rudies.inspect }"
     broadcast_message( "connected", { rudy: current_rudy } ) if rudy_signed_in?
     broadcast_message( "walt.welcome", { rudy: current_rudy } ) if rudy_signed_in?
 
@@ -16,7 +15,6 @@ class ChatController < WebsocketRails::BaseController
     if @@song.nil?
       Thread.new kickstart_radio
     else
-      puts "Playing a song in progress. SONG: #{ @@song.inspect }, STARTED: #{ @@started }"
       send_message "new_song", { song: {  id:       @@song.id, 
                                           title:    @@song.title, 
                                           artist:   @@song.artist, 
@@ -38,30 +36,53 @@ class ChatController < WebsocketRails::BaseController
   end
 
   def add_dj
-    puts "DJ Added"
     @@djs << current_rudy
     broadcast_message "dj_added", { rudy: current_rudy }
   end
 
   def remove_dj
-    puts "DJ Removed"
     @@djs.delete current_rudy
     broadcast_message "dj_removed", { rudy: current_rudy }
   end
 
   def lame
-    puts "DJ Lamed"
     broadcast_message "dj_lamed", { rudy: current_rudy }
   end
 
   def meh
-    puts "DJ Mehed"
     broadcast_message "dj_mehed", { rudy: current_rudy }
   end
 
   def awesome
-    puts "DJ Awesomed"
     broadcast_message "dj_awesomed", { rudy: current_rudy }
+  end
+
+  def query
+    songs = Song.where( "title like '%#{ message[ :search_term ] }%' or artist like '%#{ message[ :search_term ] }%'" ).limit( 40 ).to_a
+    puts "SONGS: #{ songs.inspect }"
+    send_message "search_results", { songs: songs }
+  end
+
+  def add_song_to_queue
+    song = Song.find( message[ :id ] )
+    puts "SONG: #{ song.inspect }"
+    if QueuedSong.where( rudy_id: current_rudy.id, song_id: song.id ).first.nil?
+      queued_song = QueuedSong.create rudy_id: current_rudy.id, song_id: song.id, sequence: current_rudy.queued_songs.count
+      send_message "song_added_to_queue", { queued_song_id: queued_song.id, song: song }
+    end
+  end
+
+  def remove_song_from_queue
+    queued_song = QueuedSong.find( message[ :id ] )
+    puts "SONG: #{ queued_song.inspect }"
+    unless queued_song.nil?
+      send_message "song_removed_from_queue", { queued_song_id: queued_song.id, song: queued_song.song }
+      queued_song.delete
+      current_rudy.queued_songs.order( :sequence ).each_with_index do |queued_song, index|
+        queued_song.sequence = index
+        queued_song.save
+      end
+    end
   end
 
   private
@@ -79,12 +100,7 @@ class ChatController < WebsocketRails::BaseController
   end
 
   def kickstart_radio
-    puts "Kickstarting the radio."
-    if @@song.nil?
-      @@song      = Song.all.sample
-    else
-      @@song      = Song.where( 'artist != ?', @@song.artist ).sample
-    end
+    @@song      = Song.all.sample
     @@started   = Time.now
 
     unless @@rudies.nil?

@@ -11,7 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131129222633) do
+ActiveRecord::Schema.define(version: 20131204193944) do
+
+  create_table "queued_songs", force: true do |t|
+    t.integer  "rudy_id"
+    t.integer  "song_id"
+    t.integer  "sequence"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "queued_songs", ["rudy_id"], name: "index_queued_songs_on_rudy_id", using: :btree
+  add_index "queued_songs", ["song_id"], name: "index_queued_songs_on_song_id", using: :btree
 
   create_table "rudies", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -30,6 +41,9 @@ ActiveRecord::Schema.define(version: 20131129222633) do
     t.string   "gender"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "points",                 default: 0
+    t.string   "actual_name"
+    t.string   "nickname"
   end
 
   add_index "rudies", ["email"], name: "index_rudies_on_email", unique: true, using: :btree
@@ -43,6 +57,7 @@ ActiveRecord::Schema.define(version: 20131129222633) do
     t.integer  "rudy_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "points",     default: 0
   end
 
 end

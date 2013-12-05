@@ -6,5 +6,7 @@ class Rudy < ActiveRecord::Base
 
   validates :name, uniqueness: { case_sensitive: false }
 
-  has_many :songs
+  #has_many :songs
+  has_many :queued_songs
+  has_many :songs, through: :queued_songs, order: :sequence
 end

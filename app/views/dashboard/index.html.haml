@@ -21,9 +21,10 @@
           = link_to "<span class='glyphicon glyphicon-thumbs-down'></span>".html_safe, "/lame", class: "btn btn-default", id: "lame"
           = link_to "<span class='glyphicon glyphicon-minus'></span>".html_safe, "/meh", class: "btn btn-default", id: "meh"
           = link_to "<span class='glyphicon glyphicon-thumbs-up'></span>".html_safe, "/awesome", class: "btn btn-default", id: "awesome"
-    %ul.nav.nav-tabs.nav-justified
+    %ul.nav.nav-tabs
       %li#chat_tab.active= link_to "<span class='glyphicon glyphicon-comment'></span>".html_safe, root_path
       %li#queue_tab= link_to "<span class='glyphicon glyphicon-music'></span>".html_safe, root_path
+      %li#library_tab= link_to "<span class='glyphicon glyphicon-list'></span>".html_safe, root_path
     .panel.panel-primary#chat_panel
       .panel-body#chat_text
       .panel-footer.text-center
@@ -31,8 +32,28 @@
           = text_field :chat, :message, class: 'form-control input-sm', autocomplete: "off", autofocus: true, placeholder: 'hep hep hep hep'
     .panel.panel-primary#queue_panel
       .panel-body#queue_list
-        - Song.order( :title ).each do |song|
-          %p{ id: song.id }
+        - current_rudy.queued_songs.order( :sequence ).each do |queued_song|
+          %p{ id: "queue_list_#{ queued_song.song.id }" }
+            = link_to "<span class='glyphicon glyphicon-minus-sign'></span>".html_safe, "/remove_to_queue", class: 'btn btn-success remove_from_queue pull-right', id: "library_list_remove_#{ queued_song.id }"
+            = '"' + queued_song.song.title + '"'
+            %br/
+            = queued_song.song.artist
+        #search_results
+      .panel-footer.text-center#library_search_form
+        %br/
+        -# = form_tag( '/search', role: 'form', id: 'search_form' ) do
+          = text_field :queue, :q, class: 'form-control input-sm', autocomplete: "off", placeholder: 'search'
+    .panel.panel-primary#library_panel
+      .panel-body#library_list
+        - Song.all.order( :title ).each do |song|
+          %p{ id: "library_list_#{ song.id }" }
+            - unless current_rudy.songs.include? song
+              .pull-right
+                = link_to "<span class='glyphicon glyphicon-plus-sign'></span>".html_safe, "/add_to_queue", class: 'btn btn-success add_to_queue', id: "library_list_add_#{ song.id }"
+            - else
+              .pull-right
+                - queued_song = QueuedSong.where( song_id: song.id, rudy_id: current_rudy.id ).first
+                = link_to "<span class='glyphicon glyphicon-minus-sign'></span>".html_safe, "/remove_from_queue", class: 'btn btn-success remove_from_queue', id: "library_list_add_#{ queued_song.id }"
             = '"' + song.title + '"'
             %br/
             = song.artist

@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  rudy_id: 
+  song_id: 
+  sequence: 1
+
+two:
+  rudy_id: 
+  song_id: 
+  sequence: 1

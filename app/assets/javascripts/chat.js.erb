@@ -2,7 +2,7 @@
 $( document ).ready( function() {
 
   <% if Rails.env.development? %>
-  var dispatcher = new WebSocketRails( 'localhost:3001/websocket' );
+  var dispatcher = new WebSocketRails( 'localhost:3000/websocket' );
   <% else %>
   var dispatcher = new WebSocketRails( 'www.skaroom.com/websocket' );
   <% end %>
@@ -156,6 +156,26 @@ $( document ).ready( function() {
     }, 800);
   } );
 
+  $( "#search_form" ).submit( function( event ) {
+    event.preventDefault();
+    var search_term = $( "#queue_q" ).val().trim();
+    if ( search_term != '' ) {
+      dispatcher.trigger( 'playlist.query', { search_term: search_term } );
+    }
+  } );
+
+  dispatcher.bind( 'search_results', function( who ) {
+    $( "#search_results" ).html( '' );
+    for ( var i in who.songs ) {
+      display  = "<p id='search_result_" + who.songs[ i ].id + "'>";
+      display +=   '"' + who.songs[ i ].title + '"';
+      display +=   '<br />';
+      display +=   who.songs[ i ].artist;
+      display += "</p>";
+      $( "#search_results" ).append( display );
+    }
+  } );
+
   $( "#chat_form" ).submit( function( event ) {
     event.preventDefault();
     var text = $( "#chat_message" ).val().trim();
@@ -177,8 +197,10 @@ $( document ).ready( function() {
     if ( ! $( "#chat_tab" ).hasClass( 'active' ) ) {
       $( "#chat_tab" ).addClass( 'active' );
       $( "#queue_tab" ).removeClass( 'active' );
+      $( "#library_tab" ).removeClass( 'active' );
       $( "#chat_panel" ).show();
       $( "#queue_panel" ).hide();
+      $( "#library_panel" ).hide();
     }
   } );
 
@@ -187,9 +209,63 @@ $( document ).ready( function() {
     if ( ! $( "#queue_tab" ).hasClass( 'active' ) ) {
       $( "#queue_tab" ).addClass( 'active' );
       $( "#chat_tab" ).removeClass( 'active' );
+      $( "#library_tab" ).removeClass( 'active' );
       $( "#queue_panel" ).show();
       $( "#chat_panel" ).hide();
+      $( "#library_panel" ).hide();
     }
+  } );
+
+  $( "#library_tab a" ).click( function( event ) {
+    event.preventDefault();
+    if ( ! $( "#library_tab" ).hasClass( 'active' ) ) {
+      $( "#library_tab" ).addClass( 'active' );
+      $( "#chat_tab" ).removeClass( 'active' );
+      $( "#queue_tab" ).removeClass( 'active' );
+      $( "#library_panel" ).show();
+      $( "#chat_panel" ).hide();
+      $( "#queue_panel" ).hide();
+    }
+  } );
+
+  $( document ).on( 'click', '.add_to_queue', function( event ) {
+    event.preventDefault();
+    var match = this.id.match( /_(\d+)$/ );
+    var id = match[ 1 ];
+    dispatcher.trigger( 'playlist.add', { id: id } );
+    $( 'span', this ).removeClass( 'glyphicon-plus-sign' );
+    $( 'span', this ).addClass( 'glyphicon-minus-sign' );
+    $( this ).removeClass( 'add_to_queue' );
+    $( this ).addClass( 'remove_from_queue' );
+  } );
+
+  dispatcher.bind( 'song_added_to_queue', function( which ) {
+    var display = '';
+    display += "<p id='queue_list_" + which.song.id +  "'>";
+    display += "  <a href='/remove_from_queue' class='btn btn-success remove_from_queue pull-right' id='library_list_remove_" + which.queued_song_id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
+    display += '  "' + which.song.title + '"<br />';
+    display +=    which.song.artist
+    display += "</p>";
+    $( "#queue_list" ).append( display );
+    $( '#library_list_add_' + which.song.id ).attr( "id", "library_list_add_" + which.queued_song_id );
+  } );
+
+  $( document ).on( 'click', '.remove_from_queue', function( event ) {
+    event.preventDefault();
+    var match = this.id.match( /_(\d+)$/ );
+    var id = match[ 1 ];
+    dispatcher.trigger( 'playlist.remove', { id: id } );
+
+    var library_element = $( "#library_list_add_" + id );
+    $( 'span', library_element ).removeClass( 'glyphicon-minus-sign' );
+    $( 'span', library_element ).addClass( 'glyphicon-plus-sign' );
+    $( library_element ).addClass( 'add_to_queue' );
+    $( library_element ).removeClass( 'remove_from_queue' );
+  } );
+
+  dispatcher.bind( 'song_removed_from_queue', function( which ) {
+    $( "#queue_list_" + which.song.id ).remove();
+    $( '#library_list_add_' + which.queued_song_id ).attr( "id", "library_list_add_" + which.song.id );
   } );
 
   $( "#upload_music_link" ).click( function( event ) {
@@ -207,7 +283,7 @@ $( document ).ready( function() {
         mp3 += '  "' + file.title + '"<br />';
         mp3 += '  ' + file.artist
         mp3 += '</p>';
-        $( "#queue_list" ).append( mp3 );
+        $( "#library_list" ).append( mp3 );
       } );
     },
     add: function ( e, data ) {

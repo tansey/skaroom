@@ -12,3 +12,14 @@
 #queue_uploading {
   display: none;
 }
+
+#library_panel {
+  border-top: 0;
+  border-radius: 0 0 4px 4px;
+  display: none;
+}
+
+#library_list {
+  height: 250px;
+  overflow-y: scroll;
+}
