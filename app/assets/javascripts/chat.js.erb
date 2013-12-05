@@ -53,6 +53,9 @@ $( document ).ready( function() {
     rudy.removeClass( 'label-primary' );
     rudy.removeClass( 'label-success' );
     rudy.addClass( 'label-info' );
+
+    rudy.detach();
+    $('#dj_list').append( rudy );
   } );
 
   dispatcher.bind( 'dj_removed', function( who ) {
@@ -63,6 +66,9 @@ $( document ).ready( function() {
     rudy.removeClass( 'label-primary' );
     rudy.removeClass( 'label-success' );
     rudy.addClass( 'label-default' );
+
+    rudy.detach();
+    $('#rudy_list').append( rudy );
   } );
 
   $( "#lame" ).click( function( event ) {
