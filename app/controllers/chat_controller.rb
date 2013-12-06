@@ -6,7 +6,8 @@ class ChatController < WebsocketRails::BaseController
   # before_filter :current_song
 
   def connect
-    send_message "who_is_connected", { rudies: @@rudies }
+    send_message "who_is_connected", { rudies: @@rudies, djs: @@djs }
+    puts "DJs: #{ @@djs }"
     @@rudies << current_rudy unless @@rudies.include? current_rudy or not rudy_signed_in?
     broadcast_message( "connected", { rudy: current_rudy } ) if rudy_signed_in?
     broadcast_message( "walt.welcome", { rudy: current_rudy } ) if rudy_signed_in?
@@ -15,7 +16,8 @@ class ChatController < WebsocketRails::BaseController
     if @@song.nil?
       Thread.new kickstart_radio
     else
-      send_message "new_song", { song: {  id:       @@song.id, 
+      send_message "new_song", {  dj:   @@djs[ 0 ],
+                                  song: {  id:       @@song.id, 
                                           title:    @@song.title, 
                                           artist:   @@song.artist, 
                                           song:     @@song.song.to_s, 
@@ -36,8 +38,12 @@ class ChatController < WebsocketRails::BaseController
   end
 
   def add_dj
-    @@djs << current_rudy
-    broadcast_message "dj_added", { rudy: current_rudy }
+    unless current_rudy.songs.empty?
+      @@djs << current_rudy
+      broadcast_message "dj_added", { rudy: current_rudy }
+    else
+      send_message "dj_not_added", {}
+    end
   end
 
   def remove_dj
@@ -100,11 +106,23 @@ class ChatController < WebsocketRails::BaseController
   end
 
   def kickstart_radio
-    @@song      = Song.all.sample
+    if @@djs.empty?
+      @@song  = Song.all.sample
+      dj      = nil
+    else
+      dj      = @@djs.shift
+      @@song  = dj.songs.first
+      reorder_queued_songs if dj == current_rudy
+      @@djs.push dj
+    end
     @@started   = Time.now
 
+    puts "SONG: #{ @@song.inspect }"
+    puts "DJ:   #{ dj.inspect }"
+
     unless @@rudies.nil?
-      broadcast_message "new_song", { song: { id:       @@song.id, 
+      broadcast_message "new_song", { dj:   dj,
+                                      song: { id:       @@song.id, 
                                               title:    @@song.title, 
                                               artist:   @@song.artist, 
                                               song:     @@song.song.to_s, 
@@ -113,27 +131,19 @@ class ChatController < WebsocketRails::BaseController
                                               rudy:     @@song.rudy.name } }, namespace: :music
     end
 
-    #EM.add_timer( 1 ) { @@position += 1 }
     EM.add_timer( @@song.duration ) { kickstart_radio }
   end
 
-  #def handle_song( song )
-  #  @@position -= 1
-  #  puts "POSITION: #{ @@position }"
-  #  if @@position <= 0
-  #    @@song = Song.all.sample
-  #    unless @@song.nil?
-  #      @@position = @@song.duration
-  #      puts "NEW SONG: #{ @@song.inspect }"
-
-  #      broadcast_message "music.playing", { song: {  id:       @@song.id, 
-  #                                                    title:    @@song.title, 
-  #                                                    artist:   @@song.artist, 
-  #                                                    song:     @@song.song.to_s, 
-  #                                                    duration: @@song.duration, 
-  #                                                    position: @@position,
-  #                                                    rudy:     @@song.rudy.name } }
-  #    end
-  #  end
-  #end
+  def reorder_queued_songs
+    puts "SONGS BEFORE REORDER: #{ current_rudy.queued_songs.inspect }"
+    first_queued_song = current_rudy.queued_songs.order( :sequence ).shift
+    current_rudy.queued_songs.order( :sequence ).each_with_index do |queued_song, index|
+      queued_song.sequence = index
+      queued_song.save
+    end
+    first_queued_song.sequence = current_rudy.queued_songs.count
+    first_queued_song.rudy_id = current_rudy.id
+    first_queued_song.save
+    puts "SONGS AFTER REORDER: #{ current_rudy.queued_songs.inspect }"
+  end
 end

@@ -16,7 +16,16 @@ $( document ).ready( function() {
       display  = "<p style='display:inline-block;' class='label label-default' id='rudy-" + who.rudies[ i ].id + "'>";
       display +=    who.rudies[ i ].name;
       display += "</p>&nbsp; ";
-      $( "#rudy_list" ).append( display );
+      if ( who.djs.length > 0 && $.grep( who.djs, function( n ) { return n.id === who.rudies[ i ].id; } ) != null ) {
+        $( "#dj_list" ).append( display );
+        if ( who.rudies[ i ].id == who.djs[ 0 ].id ) {
+          var current_dj = $( "#rudy-" + who.djs[ 0 ].id );
+          current_dj.removeClass( 'label-default' );
+          current_dj.addClass( 'label-info' );
+        }
+      } else {
+        $( "#rudy_list" ).append( display );
+      }
     }
   } );
 
@@ -36,37 +45,23 @@ $( document ).ready( function() {
     var spin = $( "#spin" );
     if ( spin.hasClass( 'btn-info' ) ) {
       dispatcher.trigger( 'dj.remove', {} );
-      spin.removeClass( 'btn-info' );
-      spin.addClass( 'btn-default' );
     } else {
       dispatcher.trigger( 'dj.add', {} );
-      spin.removeClass( 'btn-default' );
-      spin.addClass( 'btn-info' );
     }
   } );
 
   dispatcher.bind( 'dj_added', function( who ) {
     var rudy = $( "#rudy-" + who.rudy.id );
-    rudy.removeClass( 'label-default' );
-    rudy.removeClass( 'label-info' );
-    rudy.removeClass( 'label-danger' );
-    rudy.removeClass( 'label-primary' );
-    rudy.removeClass( 'label-success' );
-    rudy.addClass( 'label-info' );
-
     rudy.detach();
     $('#dj_list').append( rudy );
   } );
 
+  dispatcher.bind( 'dj_not_added', function( who ) {
+    alert( "Don't be a dolt. Add some songs to your queue first.")
+  } );
+
   dispatcher.bind( 'dj_removed', function( who ) {
     var rudy = $( "#rudy-" + who.rudy.id );
-    rudy.removeClass( 'label-default' );
-    rudy.removeClass( 'label-info' );
-    rudy.removeClass( 'label-danger' );
-    rudy.removeClass( 'label-primary' );
-    rudy.removeClass( 'label-success' );
-    rudy.addClass( 'label-default' );
-
     rudy.detach();
     $('#rudy_list').append( rudy );
   } );
@@ -304,23 +299,34 @@ $( document ).ready( function() {
   } );
 
   var count_down;
+  var current_dj;
 
   dispatcher.bind( 'music.new_song', function( what ) {
+
+    current_dj = what.dj;
 
     $("#chat_text").append( '<div class="well well-sm">"' + what.song.title + '"<br />' + what.song.artist + '</div>' );
     $("#chat_text").stop().animate({
       scrollTop: $('#chat_text')[0].scrollHeight
     }, 800);
 
-    $( '#rudy_list .label-danger'  ).removeClass( 'label-danger'  ).
-                                     removeClass( 'label-default' ).
-                                     addClass(    'label-default' );
-    $( '#rudy_list .label-success' ).removeClass( 'label-success' ).
-                                     removeClass( 'label-default' ).
-                                     addClass(    'label-default' );
-    $( '#rudy_list .label-warning' ).removeClass( 'label-warning' ).
-                                     removeClass( 'label-default' ).
-                                     addClass(    'label-default' );
+    var rudy_list = '';
+    rudy_list  = '#rudy_list .label-danger,';
+    rudy_list += '#rudy_list .label-success,';
+    rudy_list += '#rudy_list .label-warning,';
+    rudy_list += '#rudy_list .label-info,';
+    rudy_list += '#dj_list .label-danger,';
+    rudy_list += '#dj_list .label-success,';
+    rudy_list += '#dj_list .label-warning,';
+    rudy_list += '#dj_list .label-info';
+
+    $( rudy_list ).removeClass( 'label-danger'  ).
+                   removeClass( 'label-success' ).
+                   removeClass( 'label-warning' ).
+                   removeClass( 'label-info'    ).
+                   removeClass( 'label-default' ).
+                   addClass(    'label-default' );
+
     $( "#awesome" ).removeClass( 'btn-success' ).
                     removeClass( 'btn-default' ).
                     addClass(    'btn-default' );
@@ -330,6 +336,10 @@ $( document ).ready( function() {
     $( "#lame"    ).removeClass( 'btn-danger'  ).
                     removeClass( 'btn-default' ).
                     addClass(    'btn-default' );
+
+    if ( what.dj != null ) {
+      $( "#rudy-" + what.dj.id ).addClass( 'label-info' );
+    }
 
     clearTimeout( count_down );
     var duration = what.song.duration - what.song.position;

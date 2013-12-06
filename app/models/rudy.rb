@@ -8,5 +8,5 @@ class Rudy < ActiveRecord::Base
 
   #has_many :songs
   has_many :queued_songs
-  has_many :songs, through: :queued_songs, order: :sequence
+  has_many :songs, through: :queued_songs, order: 'queued_songs.sequence'
 end
