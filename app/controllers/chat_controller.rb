@@ -178,19 +178,28 @@ class ChatController < WebsocketRails::BaseController
 
     EM.cancel_timer( @@current_timer )
 
+    puts "In kickstart_radio ========================================================================"
+
+    puts "@@dj: #{ @@dj.inspect }"
     unless @@dj.nil?
       @@dj.points += @@spin_stats[ :meh ].count + @@spin_stats[ :awesome ].count
       @@dj.save
+      puts "@@dj.points: #{ @@dj.points.inspect }"
 
       if current_rudy.id == @@dj.id
+        puts "SENDING NEW QUEUE to #{ current_rudy.inspect }"
+        puts "current_rudy.queued_songs.order( :sequence ): #{ current_rudy.queued_songs.order( :sequence ).inspect }"
         send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
       end
     end
+    puts "@@song: #{ @@song.inspect }"
     unless @@song.nil?
       @@song.points += @@spin_stats[ :awesome ].count - @@spin_stats[ :lame ].count
       @@song.save
+      puts "@@song.points: #{ @@song.points.inspect }"
     end
 
+    puts "@@djs: #{ @@djs.inspect }"
     if @@djs.empty?
       @@song  = Song.all.sample
       @@dj      = nil
@@ -202,8 +211,12 @@ class ChatController < WebsocketRails::BaseController
         @@dj_index += 1
         @@dj_index = 0 if @@dj_index >= @@djs.count
       end
+      puts "@@dj_index: #{ @@dj_index.inspect }"
       @@dj    = @@djs[ @@dj_index ]
+      puts "@@dj: #{ @@dj.inspect }"
       @@song  = @@dj.songs.first
+      puts "@@song: #{ @@song.inspect }"
+      puts "@@dj.id == current_rudy.id: #{ ( @@dj.id == current_rudy.id ).inspect }"
       reorder_queued_songs if @@dj.id == current_rudy.id
     end
 
@@ -228,6 +241,7 @@ class ChatController < WebsocketRails::BaseController
   end
 
   def reorder_queued_songs
+    puts "SONGS BEFORE REORDER: #{ current_rudy.queued_songs.order( :sequence ).inspect }"
     first_queued_song = current_rudy.queued_songs.order( :sequence ).first
     first_queued_song.sequence = current_rudy.queued_songs.count + 1
     first_queued_song.save
@@ -235,5 +249,6 @@ class ChatController < WebsocketRails::BaseController
       queued_song.sequence = index
       queued_song.save
     end
+    puts "SONGS AFTER REORDER: #{ current_rudy.queued_songs.order( :sequence ).inspect }"
   end
 end
