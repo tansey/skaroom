@@ -342,9 +342,13 @@ $( document ).ready( function() {
 
     if ( current_dj != null && me.id == current_dj.id ) {
       $( '#vote_buttons a' ).addClass( 'disabled' );
-      var chat_text = '<div class="well well-sm">' + current_dj.name + ' started spinning "' + what.song.title + '" by ' + what.song.artist + '.</div>';
     } else {
       $( '#vote_buttons a' ).removeClass( 'disabled' );
+    }
+
+    if ( current_dj != null ) {
+      var chat_text = '<div class="well well-sm">' + current_dj.name + ' started spinning "' + what.song.title + '" by ' + what.song.artist + '.</div>';
+    } else {
       var chat_text = '<div class="well well-sm">Walt started spinning "' + what.song.title + '" by ' + what.song.artist + '.</div>';
     }
 
