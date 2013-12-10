@@ -437,10 +437,12 @@ $( document ).ready( function() {
                     removeClass( 'btn-default' ).
                     addClass(    'btn-default' );
 
+    $( '.alert-info' ).removeClass( 'alert' ).removeClass( 'alert-info' );
     if ( what.dj != null ) {
       $( "#rudy-" + what.dj.id ).addClass( 'label-info' );
       if ( what.dj.id == me.id ) {
         $( '#queue_list_' + what.song.id ).addClass( 'alert alert-info' );
+
       }
     }
 
