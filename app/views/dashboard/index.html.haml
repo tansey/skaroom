@@ -44,7 +44,7 @@
                 = queued_song.song.artist
             .col-sm-2.text-right
               .queue_tools
-                - unless queued_song.sequence <= 1
+                - unless queued_song.sequence == 0
                   = link_to "<span class='glyphicon glyphicon-chevron-up'></span>".html_safe, "/move_up_queue", class: 'btn btn-default btn-xs move_up_queue', id: "move_up_queue_#{ queued_song.id }"
                 - unless queued_song.sequence == current_rudy.queued_songs.count - 1
                   = link_to "<span class='glyphicon glyphicon-chevron-down'></span>".html_safe, "/move_down_queue", class: 'btn btn-default btn-xs move_down_queue', id: "move_down_queue_#{ queued_song.id }"
