@@ -20,8 +20,8 @@ class ChatController < WebsocketRails::BaseController
     if @@song.nil?
       Thread.new kickstart_radio
     else
-      send_message "new_song", {  dj:   @@djs[ 0 ],
-                                  song: {  id:       @@song.id, 
+      send_message "new_song", {  dj:     @@djs[ @@dj_index ],
+                                  song: { id:       @@song.id, 
                                           title:    @@song.title, 
                                           artist:   @@song.artist, 
                                           song:     @@song.song.to_s, 
@@ -32,10 +32,14 @@ class ChatController < WebsocketRails::BaseController
   end
 
   def disconnect
-    @@rudies.delete current_rudy
-    @@djs.delete current_rudy
-    broadcast_message "disconnected", { rudy: current_rudy }
-    kickstart_radio if current_rudy.id == @@dj.id
+    unless current_rudy.nil?
+      @@rudies.delete current_rudy
+      @@djs.delete current_rudy
+      broadcast_message "disconnected", { rudy: current_rudy }
+      kickstart_radio if current_rudy.id == @@dj.id
+    else
+      # Validate connections, djs, rudies, etc.
+    end
   end
 
   def toast
