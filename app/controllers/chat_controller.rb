@@ -189,14 +189,13 @@ class ChatController < WebsocketRails::BaseController
 
   def reorder_queued_songs
     puts "SONGS BEFORE REORDER: #{ current_rudy.queued_songs.inspect }"
-    first_queued_song = current_rudy.queued_songs.order( :sequence ).shift
+    first_queued_song = current_rudy.queued_songs.order( :sequence ).first
+    first_queued_song.sequence = current_rudy.queued_songs.count
+    first_queued_song.save
     current_rudy.queued_songs.order( :sequence ).each_with_index do |queued_song, index|
       queued_song.sequence = index
       queued_song.save
     end
-    first_queued_song.sequence = current_rudy.queued_songs.count
-    first_queued_song.rudy_id = current_rudy.id
-    first_queued_song.save
     puts "SONGS AFTER REORDER: #{ current_rudy.queued_songs.inspect }"
   end
 end
