@@ -172,6 +172,19 @@ $( document ).ready( function() {
     points.text( current_dj.points + who.awesomes + who.mehs );
   } );
 
+  dispatcher.bind( 'new_queue', function( what ) {
+    $( "#queue_list" ).text( '' );
+
+    for ( var i in what.queued_songs ) {
+      display += "<p id='queue_list_" + which.queued_songs[ i ].song.id +  "'>";
+      display += "  <a href='/remove_from_queue' class='btn btn-success remove_from_queue pull-right' id='library_list_remove_" + which.queued_songs[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
+      display += '  "' + which.song.title + '"<br />';
+      display +=    which.queued_songs[ i ].song.artist
+      display += "</p>";
+      $( "#queue_list" ).append( display );
+    }
+  } );
+
   dispatcher.bind( 'chat.new_toast', function( message ) {
     $("#chat_text").append( "<p><strong>" + message.rudy + "</strong>: " + message.toast + "</p>" );
     $("#chat_text").stop().animate({
