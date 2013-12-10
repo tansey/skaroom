@@ -100,7 +100,7 @@ class ChatController < WebsocketRails::BaseController
     if QueuedSong.where( rudy_id: current_rudy.id, song_id: song.id ).first.nil?
       queued_song = QueuedSong.create rudy_id: current_rudy.id, song_id: song.id, sequence: current_rudy.queued_songs.count
       # send_message "song_added_to_queue", { queued_song_id: queued_song.id, song: song }
-      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
+      send_message( "new_queue", dj: current_rudy, queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
     end
   end
 
@@ -113,7 +113,7 @@ class ChatController < WebsocketRails::BaseController
         queued_song.sequence = index
         queued_song.save
       end
-      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
+      send_message( "new_queue", dj: current_rudy, queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
     end
   end
 
@@ -128,7 +128,7 @@ class ChatController < WebsocketRails::BaseController
       song_to_move.save
       song_to_displace.save
 
-      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
+      send_message( "new_queue", dj: current_rudy, queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
     end
   end
 
@@ -143,7 +143,7 @@ class ChatController < WebsocketRails::BaseController
       song_to_move.save
       song_to_displace.save
       
-      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
+      send_message( "new_queue", dj: current_rudy, queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
     end
   end
 
