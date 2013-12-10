@@ -157,8 +157,8 @@ class ChatController < WebsocketRails::BaseController
       end
       @@dj    = @@djs[ @@dj_index ]
       @@song  = @@dj.songs.first
-      reorder_queued_songs if @@dj == current_rudy
-      send_message( "new_queue", queue: current_rudy.queued_songs )
+      reorder_queued_songs if @@dj.id == current_rudy.id
+      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ) )
     end
 
     unless @@dj.nil?
@@ -173,6 +173,8 @@ class ChatController < WebsocketRails::BaseController
     @@started   = Time.now
 
     @@spin_stats = { awesome: [], meh: [], lame: [] }
+
+    puts "CURRENT DJ: #{ @@dj.inspect }"
 
     unless @@rudies.nil?
       broadcast_message "new_song", { dj:   @@dj,
