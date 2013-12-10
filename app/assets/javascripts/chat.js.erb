@@ -187,9 +187,13 @@ $( document ).ready( function() {
       display += "    <div class='queue_tools'>";
       if ( i != 0 ) {
         display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='move_up_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-up'></span></a>";
+      } else {
+        display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='move_up_queue_" + what.queue[ i ].id + "' disabled><span class='glyphicon glyphicon-chevron-up'></span></a>";
       }
       if ( i != what.queue.length - 1 ) {
         display += "      <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-down'></span></a>";
+      } else {
+        display += "      <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + what.queue[ i ].id + "' disabled><span class='glyphicon glyphicon-chevron-down'></span></a>";
       }
       display += "      <a href='/remove_from_queue' class='btn btn-success btn-xs remove_from_queue' id='library_list_remove_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
       display += "    </div>";
@@ -302,10 +306,14 @@ $( document ).ready( function() {
     display += "  <div class='col-sm-2 text-right'>";
     display += "    <div class='queue_tools'>";
     if ( i != 0 ) {
-      display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='move_up_queue_" + which.queued_song_id + "'><span class='glyphicon glyphicon-chevron-up'></span></a>";
+      display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue' id='move_up_queue_" + which.queued_song_id + "'><span class='glyphicon glyphicon-chevron-up'></span></a>";
+    } else {
+      display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue' id='move_up_queue_" + which.queued_song_id + "' disabled><span class='glyphicon glyphicon-chevron-up'></span></a>";
     }
     if ( i != what.queue.length - 1 ) {
       display += "      <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + which.queued_song_id + "'><span class='glyphicon glyphicon-chevron-down'></span></a>";
+    } else {
+      display += "      <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + which.queued_song_id + "' disabled><span class='glyphicon glyphicon-chevron-down'></span></a>";
     }
     display += "      <a href='/remove_from_queue' class='btn btn-success btn-xs remove_from_queue' id='library_list_remove_" + which.queued_song_id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
     display += "    </div>";
