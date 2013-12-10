@@ -141,7 +141,7 @@ $( document ).ready( function() {
     rudy.addClass( 'label-danger' );
 
     var points = $( '#dj_list .label-info .points' );
-    points.val( current_dj.points + who.awesomes + who.mehs );
+    points.text( current_dj.points + who.awesomes + who.mehs );
   } );
 
   dispatcher.bind( 'dj_mehed', function( who ) {
@@ -155,7 +155,7 @@ $( document ).ready( function() {
     rudy.addClass( 'label-warning' );
 
     var points = $( '#dj_list .label-info .points' );
-    points.val( current_dj.points + who.awesomes + who.mehs );
+    points.text( current_dj.points + who.awesomes + who.mehs );
   } );
 
   dispatcher.bind( 'dj_awesomed', function( who ) {
@@ -169,7 +169,7 @@ $( document ).ready( function() {
     rudy.addClass( 'label-success' );
 
     var points = $( '#dj_list .label-info .points' );
-    points.val( current_dj.points + who.awesomes + who.mehs );
+    points.text( current_dj.points + who.awesomes + who.mehs );
   } );
 
   dispatcher.bind( 'chat.new_toast', function( message ) {
