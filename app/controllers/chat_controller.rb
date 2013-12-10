@@ -113,6 +113,36 @@ class ChatController < WebsocketRails::BaseController
     end
   end
 
+  def move_up
+    song_to_move     = current_rudy.queued_songs.find message[ :id ]
+    unless song_to_move.sequence == 0
+      song_to_displace = current_rudy.queued_songs.where( sequence: song_to_move.sequence - 1 ).first
+
+      song_to_move.sequence     = song_to_move.sequence - 1
+      song_to_displace.sequence = song_to_displace.sequence + 1
+
+      song_to_move.save
+      song_to_displace.save
+
+      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
+    end
+  end
+
+  def move_down
+    song_to_move     = current_rudy.queued_songs.find message[ :id ]
+    unless song_to_move.sequence == current_rudy.queued_songs.count
+      song_to_displace = current_rudy.queued_songs.where( sequence: song_to_move.sequence + 1 ).first
+
+      song_to_move.sequence     = song_to_move.sequence + 1
+      song_to_displace.sequence = song_to_displace.sequence - 1
+
+      song_to_move.save
+      song_to_displace.save
+      
+      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
+    end
+  end
+
   private
 
   def online_rudies
@@ -194,7 +224,6 @@ class ChatController < WebsocketRails::BaseController
   end
 
   def reorder_queued_songs
-    puts "SONGS BEFORE REORDER: #{ current_rudy.queued_songs.order( :sequence ).inspect }"
     first_queued_song = current_rudy.queued_songs.order( :sequence ).first
     first_queued_song.sequence = current_rudy.queued_songs.count + 1
     first_queued_song.save
@@ -202,6 +231,5 @@ class ChatController < WebsocketRails::BaseController
       queued_song.sequence = index
       queued_song.save
     end
-    puts "SONGS AFTER REORDER: #{ current_rudy.queued_songs.order( :sequence ).inspect }"
   end
 end

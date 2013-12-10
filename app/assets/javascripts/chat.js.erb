@@ -177,7 +177,11 @@ $( document ).ready( function() {
 
     for ( var i in what.queue ) {
       display  = "<p id='queue_list_" + what.queue[ i ].song.id +  "'>";
-      display += "  <a href='/remove_from_queue' class='btn btn-success remove_from_queue pull-right' id='library_list_remove_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
+      display += "  <div class='queue_tools pull-right'>";
+      display += "    <a href='/remove_from_queue' class='btn btn-success btn-xs remove_from_queue' id='library_list_remove_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
+      display += "    <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='moe_up_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-up'></span></a>";
+      display += "    <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-down'></span></a>";
+      display += "  </div>";
       display += '  "' + what.queue[ i ].song.title + '"<br />';
       display +=    what.queue[ i ].song.artist
       display += "</p>";
@@ -302,6 +306,20 @@ $( document ).ready( function() {
   dispatcher.bind( 'song_removed_from_queue', function( which ) {
     $( "#queue_list_" + which.song.id ).remove();
     $( '#library_list_add_' + which.queued_song_id ).attr( "id", "library_list_add_" + which.song.id );
+  } );
+
+  $( document ).on( 'click', '.move_up_queue', function( event ) {
+    event.preventDefault();
+    var match = this.id.match( /_(\d+)$/ );
+    var id = match[ 1 ];
+    dispatcher.trigger( 'playlist.move_up', { id: id } );
+  } );
+
+  $( document ).on( 'click', '.move_down_queue', function( event ) {
+    event.preventDefault();
+    var match = this.id.match( /_(\d+)$/ );
+    var id = match[ 1 ];
+    dispatcher.trigger( 'playlist.move_down', { id: id } );
   } );
 
   $( "#upload_music_link" ).click( function( event ) {

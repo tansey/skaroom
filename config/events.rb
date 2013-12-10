@@ -15,9 +15,11 @@ WebsocketRails::EventMap.describe do
     subscribe :awesome, 'chat#awesome'
   end
   namespace :playlist do
-    subscribe :add,     'chat#add_song_to_queue'
-    subscribe :remove,  'chat#remove_song_from_queue'
-    subscribe :query,   'chat#query'
+    subscribe :add,       'chat#add_song_to_queue'
+    subscribe :remove,    'chat#remove_song_from_queue'
+    subscribe :query,     'chat#query'
+    subscribe :move_up,   'chat#move_up'
+    subscribe :move_down, 'chat#move_down'
   end
 
   # You can use this file to map incoming events to controller actions.
