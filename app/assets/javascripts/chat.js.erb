@@ -178,7 +178,7 @@ $( document ).ready( function() {
     for ( var i in what.queued_songs ) {
       display += "<p id='queue_list_" + which.queued_songs[ i ].song.id +  "'>";
       display += "  <a href='/remove_from_queue' class='btn btn-success remove_from_queue pull-right' id='library_list_remove_" + which.queued_songs[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
-      display += '  "' + which.song.title + '"<br />';
+      display += '  "' + which.queued_songs[ i ].song.title + '"<br />';
       display +=    which.queued_songs[ i ].song.artist
       display += "</p>";
       $( "#queue_list" ).append( display );
