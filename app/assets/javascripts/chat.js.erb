@@ -176,15 +176,25 @@ $( document ).ready( function() {
     $( "#queue_list" ).text( '' );
 
     for ( var i in what.queue ) {
-      display  = "<p id='queue_list_" + what.queue[ i ].song.id +  "'>";
-      display += "  <div class='queue_tools pull-right'>";
-      display += "    <a href='/remove_from_queue' class='btn btn-success btn-xs remove_from_queue' id='library_list_remove_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
-      display += "    <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='moe_up_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-up'></span></a>";
-      display += "    <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-down'></span></a>";
+      display  = "<div class='row'>";
+      display += "  <div class='col-sm-10'>";
+      display += "    <p id='queue_list_" + what.queue[ i ].song.id +  "'>";
+      display += '      "' + what.queue[ i ].song.title + '"<br />';
+      display +=        what.queue[ i ].song.artist
+      display += "    </p>";
       display += "  </div>";
-      display += '  "' + what.queue[ i ].song.title + '"<br />';
-      display +=    what.queue[ i ].song.artist
-      display += "</p>";
+      display += "  <div class='col-sm-2 text-right'>";
+      display += "    <div class='queue_tools'>";
+      if ( i != 0 ) {
+        display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='move_up_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-up'></span></a>";
+      }
+      if ( i != what.queue.length - 1 ) {
+        display += "      <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-down'></span></a>";
+      }
+      display += "      <a href='/remove_from_queue' class='btn btn-success btn-xs remove_from_queue' id='library_list_remove_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
+      display += "    </div>";
+      display += "  </div>";
+      display += "</div>";
       $( "#queue_list" ).append( display );
     }
   } );
@@ -281,11 +291,28 @@ $( document ).ready( function() {
 
   dispatcher.bind( 'song_added_to_queue', function( which ) {
     var display = '';
-    display += "<p id='queue_list_" + which.song.id +  "'>";
-    display += "  <a href='/remove_from_queue' class='btn btn-success remove_from_queue pull-right' id='library_list_remove_" + which.queued_song_id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
-    display += '  "' + which.song.title + '"<br />';
-    display +=    which.song.artist
-    display += "</p>";
+
+    display  = "<div class='row'>";
+    display += "  <div class='col-sm-10'>";
+    display += "    <p id='queue_list_" + which.song.id +  "'>";
+    display += '      "' + which.song.title + '"<br />';
+    display +=        which.song.artist
+    display += "    </p>";
+    display += "  </div>";
+    display += "  <div class='col-sm-2 text-right'>";
+    display += "    <div class='queue_tools'>";
+    if ( i != 0 ) {
+      display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='move_up_queue_" + which.queued_song_id + "'><span class='glyphicon glyphicon-chevron-up'></span></a>";
+    }
+    if ( i != what.queue.length - 1 ) {
+      display += "      <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + which.queued_song_id + "'><span class='glyphicon glyphicon-chevron-down'></span></a>";
+    }
+    display += "      <a href='/remove_from_queue' class='btn btn-success btn-xs remove_from_queue' id='library_list_remove_" + which.queued_song_id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
+    display += "    </div>";
+    display += "  </div>";
+    display += "</div>";
+
+
     $( "#queue_list" ).append( display );
     $( '#library_list_add_' + which.song.id ).attr( "id", "library_list_add_" + which.queued_song_id );
   } );

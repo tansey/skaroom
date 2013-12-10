@@ -36,11 +36,19 @@
     .panel.panel-primary#queue_panel
       .panel-body#queue_list
         - current_rudy.queued_songs.order( :sequence ).each do |queued_song|
-          %p{ id: "queue_list_#{ queued_song.song.id }" }
-            = link_to "<span class='glyphicon glyphicon-minus-sign'></span>".html_safe, "/remove_to_queue", class: 'btn btn-success remove_from_queue pull-right', id: "library_list_remove_#{ queued_song.id }"
-            = '"' + queued_song.song.title + '"'
-            %br/
-            = queued_song.song.artist
+          .row
+            .col-sm-10
+              %p{ id: "queue_list_#{ queued_song.song.id }" }
+                = '"' + queued_song.song.title + '"'
+                %br/
+                = queued_song.song.artist
+            .col-sm-2.text-right
+              .queue_tools
+                - unless queued_song.sequence <= 1
+                  = link_to "<span class='glyphicon glyphicon-chevron-up'></span>".html_safe, "/move_up_queue", class: 'btn btn-default btn-xs move_up_queue', id: "move_up_queue_#{ queued_song.id }"
+                - unless queued_song.sequence == current_rudy.queued_songs.count - 1
+                  = link_to "<span class='glyphicon glyphicon-chevron-down'></span>".html_safe, "/move_down_queue", class: 'btn btn-default btn-xs move_down_queue', id: "move_down_queue_#{ queued_song.id }"
+                = link_to "<span class='glyphicon glyphicon-minus-sign'></span>".html_safe, "/remove_from_queue", class: 'btn btn-success btn-xs remove_from_queue', id: "library_list_remove_#{ queued_song.id }"
         #search_results
       .panel-footer.text-center#library_search_form
         %br/
