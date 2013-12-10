@@ -386,6 +386,9 @@ $( document ).ready( function() {
 
     if ( what.dj != null ) {
       $( "#rudy-" + what.dj.id ).addClass( 'label-info' );
+      if ( what.dj.id == me.id ) {
+        $( '#queue_list_' + what.song.id ).addClass( 'alert alert-info' );
+      }
     }
 
     clearTimeout( count_down );
