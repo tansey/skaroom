@@ -11,10 +11,12 @@ $( document ).ready( function() {
   var now_playing_audio = $( "#now_playing_audio" );
   now_playing_audio.prop( 'volume', saved_volume );
 
+  var me = null;
+
   dispatcher.bind( 'who_is_connected', function( who ) {
     for ( var i in who.rudies ) {
       display  = "<p style='display:inline-block;' class='label label-default' id='rudy-" + who.rudies[ i ].id + "'>";
-      display +=    who.rudies[ i ].name;
+      display +=    who.rudies[ i ].name + " (<span class='points'>" + who.rudies[ i ].points + "</span>)";
       display += "</p>&nbsp; ";
       if ( who.djs.length > 0 && $.grep( who.djs, function( n ) { return n.id === who.rudies[ i ].id; } ) != null ) {
         $( "#dj_list" ).append( display );
@@ -31,9 +33,13 @@ $( document ).ready( function() {
 
   dispatcher.bind( 'connected', function( who ) {
     display  = "<p style='display:inline-block;' class='label label-default' id='rudy-" + who.rudy.id + "'>";
-    display +=    who.rudy.name;
+    display +=    who.rudy.name + " (<span class='points'>" + who.rudy.points + "</span>)";
     display += "</p>&nbsp; ";
     $( "#rudy_list" ).append( display );
+  } );
+
+  dispatcher.bind( 'me', function( who ) {
+    me = who.rudy;
   } );
 
   dispatcher.bind( 'disconnected', function( who ) {
@@ -45,6 +51,8 @@ $( document ).ready( function() {
     var spin = $( "#spin" );
     if ( spin.hasClass( 'btn-info' ) ) {
       dispatcher.trigger( 'dj.remove', {} );
+      spin.removeClass( 'btn-info ' );
+      spin.addClass( 'btn-default ' );
     } else {
       dispatcher.trigger( 'dj.add', {} );
     }
@@ -54,6 +62,11 @@ $( document ).ready( function() {
     var rudy = $( "#rudy-" + who.rudy.id );
     rudy.detach();
     $('#dj_list').append( rudy );
+    if ( who.rudy.id == me.id ) {
+      var spin = $( "#spin" );
+      spin.removeClass( 'btn-default ' );
+      spin.addClass( 'btn-info ' );
+    }
   } );
 
   dispatcher.bind( 'dj_not_added', function( who ) {
@@ -126,6 +139,9 @@ $( document ).ready( function() {
     rudy.removeClass( 'label-primary' );
     rudy.removeClass( 'label-success' );
     rudy.addClass( 'label-danger' );
+
+    var points = $( '#dj_list .label-info .points' );
+    points.val( current_dj.points + who.awesomes + who.mehs );
   } );
 
   dispatcher.bind( 'dj_mehed', function( who ) {
@@ -137,6 +153,9 @@ $( document ).ready( function() {
     rudy.removeClass( 'label-primary' );
     rudy.removeClass( 'label-success' );
     rudy.addClass( 'label-warning' );
+
+    var points = $( '#dj_list .label-info .points' );
+    points.val( current_dj.points + who.awesomes + who.mehs );
   } );
 
   dispatcher.bind( 'dj_awesomed', function( who ) {
@@ -148,6 +167,9 @@ $( document ).ready( function() {
     rudy.removeClass( 'label-primary' );
     rudy.removeClass( 'label-success' );
     rudy.addClass( 'label-success' );
+
+    var points = $( '#dj_list .label-info .points' );
+    points.val( current_dj.points + who.awesomes + who.mehs );
   } );
 
   dispatcher.bind( 'chat.new_toast', function( message ) {
@@ -305,7 +327,13 @@ $( document ).ready( function() {
 
     current_dj = what.dj;
 
-    $("#chat_text").append( '<div class="well well-sm">"' + what.song.title + '"<br />' + what.song.artist + '</div>' );
+    if ( current_dj != null && me.id == current_dj.id ) {
+      $( '#vote_buttons a' ).addClass( 'disabled' );
+    } else {
+      $( '#vote_buttons a' ).removeClass( 'disabled' );
+    }
+
+    $("#chat_text").append( '<div class="well well-sm">' + current_dj.name + ' started spinning "' + what.song.title + '" by ' + what.song.artist + '.</div>' );
     $("#chat_text").stop().animate({
       scrollTop: $('#chat_text')[0].scrollHeight
     }, 800);

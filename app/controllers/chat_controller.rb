@@ -2,7 +2,10 @@ class ChatController < WebsocketRails::BaseController
 
   before_filter :online_rudies
   before_filter :online_djs
+  before_filter :stats_for_spin
+  before_filter :current_dj
   before_filter :current_song
+  before_filter :init_timer
   # before_filter :current_song
 
   def connect
@@ -10,6 +13,7 @@ class ChatController < WebsocketRails::BaseController
     puts "DJs: #{ @@djs }"
     @@rudies << current_rudy unless @@rudies.include? current_rudy or not rudy_signed_in?
     broadcast_message( "connected", { rudy: current_rudy } ) if rudy_signed_in?
+    send_message "me", { rudy: current_rudy }
     broadcast_message( "walt.welcome", { rudy: current_rudy } ) if rudy_signed_in?
 
     #puts "SONG: #{ @@song.inspect }"
@@ -31,6 +35,7 @@ class ChatController < WebsocketRails::BaseController
     @@rudies.delete current_rudy
     @@djs.delete current_rudy
     broadcast_message "disconnected", { rudy: current_rudy }
+    kickstart_radio if current_rudy.id == @@dj.id
   end
 
   def toast
@@ -41,6 +46,7 @@ class ChatController < WebsocketRails::BaseController
     unless current_rudy.songs.empty?
       @@djs << current_rudy
       broadcast_message "dj_added", { rudy: current_rudy }
+      kickstart_radio if @@djs.count == 1
     else
       send_message "dj_not_added", {}
     end
@@ -49,18 +55,34 @@ class ChatController < WebsocketRails::BaseController
   def remove_dj
     @@djs.delete current_rudy
     broadcast_message "dj_removed", { rudy: current_rudy }
+    kickstart_radio if current_rudy.id == @@dj.id
   end
 
   def lame
-    broadcast_message "dj_lamed", { rudy: current_rudy }
+    unless @@dj == current_rudy
+      @@spin_stats[ :awesome ].delete current_ruby
+      @@spin_stats[ :meh     ].delete current_ruby
+      @@spin_stats[ :lame    ] << current_rudy
+      broadcast_message "dj_lamed", { rudy: current_rudy, awesomes: @@spin_stats[ :awesome ].count, mehs: @@spin_stats[ :meh ].count, lames: @@spin_stats[ :lame ].count }
+    end
   end
 
   def meh
-    broadcast_message "dj_mehed", { rudy: current_rudy }
+    unless @@dj == current_rudy
+      @@spin_stats[ :awesome ].delete current_ruby
+      @@spin_stats[ :meh     ] << current_rudy
+      @@spin_stats[ :lame    ].delete current_ruby
+      broadcast_message "dj_mehed", { rudy: current_rudy, awesomes: @@spin_stats[ :awesome ].count, mehs: @@spin_stats[ :meh ].count, lames: @@spin_stats[ :lame ].count }
+    end
   end
 
   def awesome
-    broadcast_message "dj_awesomed", { rudy: current_rudy }
+    unless @@dj == current_rudy
+      @@spin_stats[ :awesome ] << current_rudy
+      @@spin_stats[ :meh     ].delete current_ruby
+      @@spin_stats[ :lame    ].delete current_ruby
+      broadcast_message "dj_awesomed", { rudy: current_rudy, awesomes: @@spin_stats[ :awesome ].count, mehs: @@spin_stats[ :meh ].count, lames: @@spin_stats[ :lame ].count }
+    end
   end
 
   def query
@@ -101,27 +123,58 @@ class ChatController < WebsocketRails::BaseController
     @@djs ||= []
   end
 
+  def stats_for_spin
+    @@spin_stats ||= { awesome: [], meh: [], lame: [] }
+  end
+
   def current_song
     @@song ||= nil
   end
 
+  def current_dj
+    @@dj ||= nil
+    @@dj_index ||= nil
+  end
+
+  def init_timer
+    @@current_timer ||= nil
+  end
+
   def kickstart_radio
+
+    EM.cancel_timer( @@current_timer )
+
     if @@djs.empty?
       @@song  = Song.all.sample
-      dj      = nil
+      @@dj      = nil
+      @@dj_index = nil
     else
-      dj      = @@djs.shift
-      @@song  = dj.songs.first
-      reorder_queued_songs if dj == current_rudy
-      @@djs.push dj
+      if @@dj.nil?
+        @@dj_index = 0
+      else
+        @@dj_index += 1
+        @@dj_index = 0 if @@dj_index >= @@djs.count
+      end
+      @@dj    = @@djs[ @@dj_index ]
+      @@song  = @@dj.songs.first
+      reorder_queued_songs if @@dj == current_rudy
     end
+
+    unless @@dj.nil?
+      @@dj.points += @@spin_stats[ :meh ].count + @@spin_stats[ :awesome ].count
+      @@dj.save
+    end
+    unless @@song.nil?
+      @@song.points += @@spin_stats[ :awesome ].count - @@spin_stats[ :lame ].count
+      @@song.save
+    end
+
     @@started   = Time.now
 
-    puts "SONG: #{ @@song.inspect }"
-    puts "DJ:   #{ dj.inspect }"
+    @@spin_stats = { awesome: [], meh: [], lame: [] }
 
     unless @@rudies.nil?
-      broadcast_message "new_song", { dj:   dj,
+      broadcast_message "new_song", { dj:   @@dj,
                                       song: { id:       @@song.id, 
                                               title:    @@song.title, 
                                               artist:   @@song.artist, 
@@ -131,7 +184,7 @@ class ChatController < WebsocketRails::BaseController
                                               rudy:     @@song.rudy.name } }, namespace: :music
     end
 
-    EM.add_timer( @@song.duration ) { kickstart_radio }
+    @@current_timer = EM.add_timer( @@song.duration ) { kickstart_radio }
   end
 
   def reorder_queued_songs
