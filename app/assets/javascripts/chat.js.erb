@@ -140,8 +140,10 @@ $( document ).ready( function() {
     rudy.removeClass( 'label-success' );
     rudy.addClass( 'label-danger' );
 
-    var points = $( '#dj_list .label-info .points' );
-    points.text( current_dj.points + who.awesomes + who.mehs );
+    if ( current_dj != null ) {
+      var points = $( '#dj_list .label-info .points' );
+      points.text( current_dj.points + who.awesomes + who.mehs );
+    }
   } );
 
   dispatcher.bind( 'dj_mehed', function( who ) {
@@ -154,8 +156,10 @@ $( document ).ready( function() {
     rudy.removeClass( 'label-success' );
     rudy.addClass( 'label-warning' );
 
-    var points = $( '#dj_list .label-info .points' );
-    points.text( current_dj.points + who.awesomes + who.mehs );
+    if ( current_dj != null ) {
+      var points = $( '#dj_list .label-info .points' );
+      points.text( current_dj.points + who.awesomes + who.mehs );
+    }
   } );
 
   dispatcher.bind( 'dj_awesomed', function( who ) {
@@ -168,8 +172,10 @@ $( document ).ready( function() {
     rudy.removeClass( 'label-success' );
     rudy.addClass( 'label-success' );
 
-    var points = $( '#dj_list .label-info .points' );
-    points.text( current_dj.points + who.awesomes + who.mehs );
+    if ( current_dj != null ) {
+      var points = $( '#dj_list .label-info .points' );
+      points.text( current_dj.points + who.awesomes + who.mehs );
+    }
   } );
 
   dispatcher.bind( 'new_queue', function( what ) {
