@@ -179,33 +179,35 @@ $( document ).ready( function() {
   } );
 
   dispatcher.bind( 'new_queue', function( what ) {
-    $( "#queue_list" ).text( '' );
+    if ( what.dj.id == me.id ) {
+      $( "#queue_list" ).text( '' );
 
-    for ( var i in what.queue ) {
-      display  = "<div class='row'>";
-      display += "  <div class='col-sm-10'>";
-      display += "    <p id='queue_list_" + what.queue[ i ].song.id +  "'>";
-      display += '      "' + what.queue[ i ].song.title + '"<br />';
-      display +=        what.queue[ i ].song.artist
-      display += "    </p>";
-      display += "  </div>";
-      display += "  <div class='col-sm-2 text-right'>";
-      display += "    <div class='queue_tools'>";
-      if ( i != 0 ) {
-        display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='move_up_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-up'></span></a>";
-      } else {
-        display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='move_up_queue_" + what.queue[ i ].id + "' disabled><span class='glyphicon glyphicon-chevron-up'></span></a>";
+      for ( var i in what.queue ) {
+        display  = "<div class='row'>";
+        display += "  <div class='col-sm-10'>";
+        display += "    <p id='queue_list_" + what.queue[ i ].song.id +  "'>";
+        display += '      "' + what.queue[ i ].song.title + '"<br />';
+        display +=        what.queue[ i ].song.artist
+        display += "    </p>";
+        display += "  </div>";
+        display += "  <div class='col-sm-2 text-right'>";
+        display += "    <div class='queue_tools'>";
+        if ( i != 0 ) {
+          display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='move_up_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-up'></span></a>";
+        } else {
+          display += "      <a href='/move_up_queue' class='btn btn-default btn-xs move_up_queue ' id='move_up_queue_" + what.queue[ i ].id + "' disabled><span class='glyphicon glyphicon-chevron-up'></span></a>";
+        }
+        if ( i != what.queue.length - 1 ) {
+          display += "      <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-down'></span></a>";
+        } else {
+          display += "      <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + what.queue[ i ].id + "' disabled><span class='glyphicon glyphicon-chevron-down'></span></a>";
+        }
+        display += "      <a href='/remove_from_queue' class='btn btn-success btn-xs remove_from_queue' id='library_list_remove_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
+        display += "    </div>";
+        display += "  </div>";
+        display += "</div>";
+        $( "#queue_list" ).append( display );
       }
-      if ( i != what.queue.length - 1 ) {
-        display += "      <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-chevron-down'></span></a>";
-      } else {
-        display += "      <a href='/move_down_queue' class='btn btn-default btn-xs move_down_queue' id='move_down_queue_" + what.queue[ i ].id + "' disabled><span class='glyphicon glyphicon-chevron-down'></span></a>";
-      }
-      display += "      <a href='/remove_from_queue' class='btn btn-success btn-xs remove_from_queue' id='library_list_remove_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
-      display += "    </div>";
-      display += "  </div>";
-      display += "</div>";
-      $( "#queue_list" ).append( display );
     }
   } );
 

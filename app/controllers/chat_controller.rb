@@ -186,11 +186,9 @@ class ChatController < WebsocketRails::BaseController
       @@dj.save
       puts "@@dj.points: #{ @@dj.points.inspect }"
 
-      if current_rudy.id == @@dj.id
-        puts "SENDING NEW QUEUE to #{ current_rudy.inspect }"
-        puts "current_rudy.queued_songs.order( :sequence ): #{ current_rudy.queued_songs.order( :sequence ).inspect }"
-        send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
-      end
+      puts "SENDING NEW QUEUE to #{ @@dj.inspect }"
+      puts "@@dj.queued_songs.order( :sequence ): #{ @@dj.queued_songs.order( :sequence ).inspect }"
+      broadcast_message( "new_queue", dj: @@dj, queue: @@dj.queued_songs.order( :sequence ).as_json( include: :song ) )
     end
     puts "@@song: #{ @@song.inspect }"
     unless @@song.nil?
@@ -217,7 +215,7 @@ class ChatController < WebsocketRails::BaseController
       @@song  = @@dj.songs.first
       puts "@@song: #{ @@song.inspect }"
       puts "@@dj.id == current_rudy.id: #{ ( @@dj.id == current_rudy.id ).inspect }"
-      reorder_queued_songs if @@dj.id == current_rudy.id
+      reorder_queued_songs
     end
 
     @@started   = Time.now
@@ -241,14 +239,14 @@ class ChatController < WebsocketRails::BaseController
   end
 
   def reorder_queued_songs
-    puts "SONGS BEFORE REORDER: #{ current_rudy.queued_songs.order( :sequence ).inspect }"
-    first_queued_song = current_rudy.queued_songs.order( :sequence ).first
-    first_queued_song.sequence = current_rudy.queued_songs.count + 1
+    puts "SONGS BEFORE REORDER: #{ @@dj.queued_songs.order( :sequence ).inspect }"
+    first_queued_song = @@dj.queued_songs.order( :sequence ).first
+    first_queued_song.sequence = @@dj.queued_songs.count + 1
     first_queued_song.save
-    current_rudy.queued_songs.order( :sequence ).each_with_index do |queued_song, index|
+    @@dj.queued_songs.order( :sequence ).each_with_index do |queued_song, index|
       queued_song.sequence = index
       queued_song.save
     end
-    puts "SONGS AFTER REORDER: #{ current_rudy.queued_songs.order( :sequence ).inspect }"
+    puts "SONGS AFTER REORDER: #{ @@dj.queued_songs.order( :sequence ).inspect }"
   end
 end
