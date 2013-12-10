@@ -176,10 +176,10 @@ $( document ).ready( function() {
     $( "#queue_list" ).text( '' );
 
     for ( var i in what.queue ) {
-      display += "<p id='queue_list_" + which.queue[ i ].song.id +  "'>";
-      display += "  <a href='/remove_from_queue' class='btn btn-success remove_from_queue pull-right' id='library_list_remove_" + which.queue[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
-      display += '  "' + which.queue[ i ].song.title + '"<br />';
-      display +=    which.queue[ i ].song.artist
+      display += "<p id='queue_list_" + what.queue[ i ].song.id +  "'>";
+      display += "  <a href='/remove_from_queue' class='btn btn-success remove_from_queue pull-right' id='library_list_remove_" + what.queue[ i ].id + "'><span class='glyphicon glyphicon-minus-sign'></span></a>";
+      display += '  "' + what.queue[ i ].song.title + '"<br />';
+      display +=    what.queue[ i ].song.artist
       display += "</p>";
       $( "#queue_list" ).append( display );
     }
