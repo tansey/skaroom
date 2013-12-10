@@ -167,7 +167,7 @@ class ChatController < WebsocketRails::BaseController
       @@dj    = @@djs[ @@dj_index ]
       @@song  = @@dj.songs.first
       reorder_queued_songs if @@dj.id == current_rudy.id
-      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ) )
+      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
     end
 
     @@started   = Time.now
