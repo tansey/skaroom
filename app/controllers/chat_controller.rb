@@ -62,7 +62,7 @@ class ChatController < WebsocketRails::BaseController
     unless @@dj == current_rudy
       @@spin_stats[ :awesome ].delete current_rudy
       @@spin_stats[ :meh     ].delete current_rudy
-      @@spin_stats[ :lame    ] << current_rudy
+      @@spin_stats[ :lame    ] << current_rudy unless @@spin_stats[ :lame ].include? current_rudy
       broadcast_message "dj_lamed", { rudy: current_rudy, awesomes: @@spin_stats[ :awesome ].count, mehs: @@spin_stats[ :meh ].count, lames: @@spin_stats[ :lame ].count }
     end
   end
@@ -70,7 +70,7 @@ class ChatController < WebsocketRails::BaseController
   def meh
     unless @@dj == current_rudy
       @@spin_stats[ :awesome ].delete current_rudy
-      @@spin_stats[ :meh     ] << current_rudy
+      @@spin_stats[ :meh     ] << current_rudy unless @@spin_stats[ :meh ].include? current_rudy
       @@spin_stats[ :lame    ].delete current_rudy
       broadcast_message "dj_mehed", { rudy: current_rudy, awesomes: @@spin_stats[ :awesome ].count, mehs: @@spin_stats[ :meh ].count, lames: @@spin_stats[ :lame ].count }
     end
@@ -78,7 +78,7 @@ class ChatController < WebsocketRails::BaseController
 
   def awesome
     unless @@dj == current_rudy
-      @@spin_stats[ :awesome ] << current_rudy
+      @@spin_stats[ :awesome ] << current_rudy unless @@spin_stats[ :awesome ].include? current_rudy
       @@spin_stats[ :meh     ].delete current_rudy
       @@spin_stats[ :lame    ].delete current_rudy
       broadcast_message "dj_awesomed", { rudy: current_rudy, awesomes: @@spin_stats[ :awesome ].count, mehs: @@spin_stats[ :meh ].count, lames: @@spin_stats[ :lame ].count }
