@@ -144,13 +144,13 @@ class ChatController < WebsocketRails::BaseController
 
     EM.cancel_timer( @@current_timer )
 
-    if current_rudy.id == @@dj.id
-      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
-    end
-
     unless @@dj.nil?
       @@dj.points += @@spin_stats[ :meh ].count + @@spin_stats[ :awesome ].count
       @@dj.save
+
+      if current_rudy.id == @@dj.id
+        send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
+      end
     end
     unless @@song.nil?
       @@song.points += @@spin_stats[ :awesome ].count - @@spin_stats[ :lame ].count
