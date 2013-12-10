@@ -93,23 +93,23 @@ class ChatController < WebsocketRails::BaseController
 
   def add_song_to_queue
     song = Song.find( message[ :id ] )
-    puts "SONG: #{ song.inspect }"
     if QueuedSong.where( rudy_id: current_rudy.id, song_id: song.id ).first.nil?
       queued_song = QueuedSong.create rudy_id: current_rudy.id, song_id: song.id, sequence: current_rudy.queued_songs.count
-      send_message "song_added_to_queue", { queued_song_id: queued_song.id, song: song }
+      # send_message "song_added_to_queue", { queued_song_id: queued_song.id, song: song }
+      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
     end
   end
 
   def remove_song_from_queue
     queued_song = QueuedSong.find( message[ :id ] )
-    puts "SONG: #{ queued_song.inspect }"
     unless queued_song.nil?
-      send_message "song_removed_from_queue", { queued_song_id: queued_song.id, song: queued_song.song }
+      #send_message "song_removed_from_queue", { queued_song_id: queued_song.id, song: queued_song.song }
       queued_song.delete
       current_rudy.queued_songs.order( :sequence ).each_with_index do |queued_song, index|
         queued_song.sequence = index
         queued_song.save
       end
+      send_message( "new_queue", queue: current_rudy.queued_songs.order( :sequence ).as_json( include: :song ) )
     end
   end
 
