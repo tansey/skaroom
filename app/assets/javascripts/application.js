@@ -19,4 +19,4 @@
 // require_tree .
 //= require websocket_rails/main
 //= require chat
-
+//= require bootstrap.min

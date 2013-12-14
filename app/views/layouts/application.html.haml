@@ -12,7 +12,7 @@
       .header
         %ul.nav.nav-pills.pull-right
           - if rudy_signed_in?
-            %li= link_to "Profile", edit_rudy_registration_path
+            %li= link_to "Profile", '#', :data => { :toggle => "modal", :target => "#profileModal" }
             %li= link_to "Sign out",  destroy_rudy_session_path, method: :delete
           - else
             %li{ class: url_for == new_rudy_session_path      ? "active" : nil }= link_to "Sign in", new_rudy_session_path
@@ -30,3 +30,6 @@
         .col-md-6
           %p.text-right
             = link_to "Ska Music on Facebook", "https://www.facebook.com/SkaMusicRoom", target: "_blank"
+    - if rudy_signed_in?
+      .container
+        = render "shared/profile", :resource => current_rudy, :resource_name => current_rudy.class.name.underscore
