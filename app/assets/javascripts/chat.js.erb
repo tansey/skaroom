@@ -562,4 +562,33 @@ $( document ).ready( function() {
     }
   } );
 
+
+
+  $( "#updateProfileSubmit" ).click( function( event ) {
+    event.preventDefault();
+    $("#updateProfileSubmitSpinner").removeClass('hidden');
+    $(this).prop('disabled', true);
+    name = $('#rudy_name').val();
+    email = $('#rudy_email').val();
+    pw = $('#rudy_password').val();
+    pw_confirm = $('#rudy_password_confirmation').val();
+    cur_pw = $('#rudy_current_password').val();
+    alert('Name: ' + name + '\nEmail: ' + email + '\nPW: ' + pw + '\nPW Confirm: ' + pw_confirm + '\nCur PW: ' + cur_pw);
+    var request = $.ajax({
+      url: "/rudies",
+      type: "POST",
+      data: {name: name, email: email, password: pw, password_confirmation: pw_confirm, current_password: cur_pw },
+      success: function(data, msg){
+        alert('Worked!\n' + msg + '\n' + data);
+      },
+      error: function(data, msg){
+        alert('Failed! ' + msg);
+      },
+      complete: function() {
+      $("#updateProfileSubmitSpinner").addClass('hidden');
+      $("#updateProfileSubmit").prop('disabled', false);
+      }
+    });
+  });
+
 } );

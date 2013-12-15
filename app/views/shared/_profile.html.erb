@@ -3,7 +3,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="font-color: white;">&times;</button>
         <h4 class="modal-title" id="myModalLabel">Profile</h4>
       </div>
       <div class="modal-body">
@@ -24,7 +24,10 @@
           <%= f.password_field :current_password %></div>
           <br />
 
-          <%= f.submit "Update", :class => "btn btn-primary" %>
+          <button id="updateProfileSubmit" class="btn-success has-spinner">
+            <i id="updateProfileSubmitSpinner" class="fa fa-refresh fa-spin hidden"> </i>
+            Update
+          </button>
         <% end %>
         <h3>Cancel my account</h3>
 
