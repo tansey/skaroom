@@ -3,5 +3,5 @@ SkaMusic::Application.routes.draw do
 
   post "queue/upload"
   
-  devise_for :rudies
+  devise_for :rudies, :controllers => {registrations: 'registrations'}
 end

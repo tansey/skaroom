@@ -61,3 +61,6 @@ gem 'ruby-mp3info'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
+
+# Needed to add attr_accessible back, to make Rails 4 play nice with Devise AJAX calls
+gem 'protected_attributes'
